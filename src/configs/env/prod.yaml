@@ -1,0 +1,9 @@
+app:
+  PORT: 3000
+  SERVER_LINK: http://localhost:3000
+database:
+  port: 5432
+  host: localhost
+  name: store
+  username: postgres
+  password: root
