@@ -4,7 +4,6 @@ import { UnprocessableEntityPipe } from './common/pipe/unprocessable-entity.pipe
 import { HttpExceptionFilter } from './common/filters/exception.filter';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app/app.module';
-import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { helmetConfig } from './configs/helmet.config';
@@ -15,10 +14,8 @@ async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule);
 	// Register public folder as static files directory
 	app.useStaticAssets("public");
-	// Initialize config service
-	const configService = app.get(ConfigService);
 	// Apply CORS config
-	app.enableCors(getCorsConfig(configService));
+	app.enableCors(getCorsConfig);
 	// Secure the app with Helmet
 	app.use(helmet(helmetConfig));
 	// Manually set custom headers for X-Powered-By and server
@@ -36,8 +33,8 @@ async function bootstrap() {
 	// initialize custom exception filter
 	app.useGlobalFilters(new HttpExceptionFilter());
 	// Starting server
-	await app.listen(configService.get<number>("app.port") || 3000, () => {
-		console.log(`Server is running on ${configService.get<string>("app.server_link")}`)
+	await app.listen(process.env.PORT || 3000, () => {
+		console.log(`Server is running on ${process.env.SERVER}`)
 	});
 }
 bootstrap();
