@@ -6,6 +6,7 @@ import { TypeOrmConfig } from 'src/configs/typeorm.config';
 import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { resolve } from 'path';
+import { SmsModule } from '../sms/sms.module';
 
 @Module({
 	imports: [
@@ -19,7 +20,8 @@ import { resolve } from 'path';
 		TypeOrmModule.forRoot(TypeOrmConfig()),
 
 		// Modules
-		UserModule
+		UserModule,
+		SmsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

@@ -19,5 +19,9 @@ namespace NodeJS {
 		DB_USERNAME: string;
 		DB_PASSWORD: string;
 		DB_HOST: string;
+
+		/** SMS.ir */
+		SMS_IR_API_KEY: string;
+		SMS_IR_SEND_URL: string;
 	}
 }
