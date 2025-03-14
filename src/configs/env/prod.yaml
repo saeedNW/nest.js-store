@@ -7,3 +7,5 @@ database:
   name: store
   username: postgres
   password: root
+cors_origin:
+  - "http://localhost:3000"

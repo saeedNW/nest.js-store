@@ -6,21 +6,35 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app/app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
+import { helmetConfig } from './configs/helmet.config';
+import { customHeadersMiddleware } from './common/middlewares/headers.middleware';
+import { getCorsConfig } from './configs/cors.config';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule);
 	// Register public folder as static files directory
 	app.useStaticAssets("public");
+	// Initialize config service
+	const configService = app.get(ConfigService);
+	// Apply CORS config
+	app.enableCors(getCorsConfig(configService));
+	// Secure the app with Helmet
+	app.use(helmet(helmetConfig));
+	// Manually set custom headers for X-Powered-By and server
+	app.use(customHeadersMiddleware);
 	// initialize swagger
 	swaggerConfiguration(app);
 	// initialize custom response interceptor
 	app.useGlobalInterceptors(new ResponseTransformerInterceptor());
 	// initialize custom validation pipe
-	app.useGlobalPipes(new UnprocessableEntityPipe());
+	app.useGlobalPipes(new UnprocessableEntityPipe({
+		whitelist: true, // Strip unknown properties
+		forbidNonWhitelisted: true, // Reject requests with unknown properties
+		transform: true, // Auto-transform payloads to DTO classes
+	}));
 	// initialize custom exception filter
 	app.useGlobalFilters(new HttpExceptionFilter());
-	// Initialize config service
-	const configService = app.get(ConfigService);
 	// Starting server
 	await app.listen(configService.get<number>("app.port") || 3000, () => {
 		console.log(`Server is running on ${configService.get<string>("app.server_link")}`)
