@@ -7,6 +7,7 @@ import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { resolve } from 'path';
 import { SmsModule } from '../sms/sms.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
 	imports: [
@@ -22,6 +23,7 @@ import { SmsModule } from '../sms/sms.module';
 		// Modules
 		UserModule,
 		SmsModule,
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

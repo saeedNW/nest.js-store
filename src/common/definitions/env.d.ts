@@ -23,5 +23,8 @@ namespace NodeJS {
 		/** SMS.ir */
 		SMS_IR_API_KEY: string;
 		SMS_IR_SEND_URL: string;
+
+		/** Secrets */
+		ACCESS_TOKEN_SECRET: string;
 	}
 }
