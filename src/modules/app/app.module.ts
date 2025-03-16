@@ -13,12 +13,13 @@ import * as path from 'path';
 
 @Module({
 	imports: [
-		/** Load environment variables from the specified .env file through 'ConfigModule' */
+		// Load ENVs
 		ConfigModule.forRoot({
 			envFilePath: resolve(".env"),
 			isGlobal: true,
 		}),
 
+		// Register and config I18n
 		I18nModule.forRoot({
 			fallbackLanguage: 'en',
 			loaderOptions: {
