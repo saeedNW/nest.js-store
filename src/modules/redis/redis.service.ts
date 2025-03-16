@@ -8,21 +8,23 @@ export class RedisService {
 	/**
 	 * Sets a key-value pair in Redis with a TTL (Time-to-Live) expiration.
 	 * @param {string} name - The key to set in Redis.
-	 * @param {string} value - The value to associate with the key.
+	 * @param {any} value - The value to associate with the key.
 	 * @param {number} ttl - The TTL (in seconds) for the key.
 	 * @returns {Promise<string>} - The status of the set operation (e.g., "OK").
 	 */
-	async set(name: string, value: string, ttl: number): Promise<string> {
-		return await this.redis.set(name, value, 'EX', ttl);
+	async set(name: string, value: any, ttl: number): Promise<string> {
+		return await this.redis.set(name, JSON.stringify(value), 'EX', ttl);
 	}
 
 	/**
 	 * Retrieves the value associated with a key from Redis.
 	 * @param {string} name - The key to retrieve from Redis.
-	 * @returns {Promise<string | null>} - The value associated with the key, or null if the key does not exist.
+	 * @returns {Promise<any | null>} - The value associated with the key, or null if the key does not exist.
 	 */
-	async get(name: string): Promise<string | null> {
-		return await this.redis.get(name);
+	async get(name: string): Promise<any | null> {
+		const result = await this.redis.get(name);
+		if (result) return JSON.parse(result);
+		return null;
 	}
 
 	/**
