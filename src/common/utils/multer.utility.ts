@@ -4,6 +4,7 @@ import { UnprocessableEntityException } from '@nestjs/common';
 import { diskStorage, Options } from 'multer';
 import { existsSync, mkdirSync, unlinkSync } from 'fs';
 import { rename } from 'fs/promises';
+import { I18nContext } from 'nestjs-i18n';
 
 // Define a Type for multer's destination manager function's callback
 export type TCallbackDestination = (error: Error | null, destination: string) => void;
@@ -30,9 +31,16 @@ function multerDestination() {
 		file: TMulterFile,
 		cb: TCallbackDestination
 	): void {
+		// Get the language from the request headers
+		const lang = req.headers['accept-language'] || 'fa';
+		// Get the I18nContext for translation
+		const i18n = I18nContext.current();
+
 		// Throw error if the uploaded file was invalid
 		if (!file?.originalname) {
-			return cb(new UnprocessableEntityException('invalid file data'), '');
+			return cb(new UnprocessableEntityException(
+				i18n?.translate('locale.MulterMessages.InvalidFile', { lang })
+			), '');
 		}
 
 		// Define the upload path for storing files temporarily
@@ -56,9 +64,16 @@ function multerFilename(
 	file: TMulterFile,
 	cb: TCallbackFilename
 ): void {
+	// Get the language from the request headers
+	const lang = req.headers['accept-language'] || 'fa';
+	// Get the I18nContext for translation
+	const i18n = I18nContext.current();
+
 	// Throw error if the uploaded file was invalid
 	if (!file?.originalname) {
-		return cb(new UnprocessableEntityException('invalid file data'), '');
+		return cb(new UnprocessableEntityException(
+			i18n?.translate('locale.MulterMessages.InvalidFile', { lang })
+		), '');
 	}
 
 	// Extract the file extension and convert it to lowercase

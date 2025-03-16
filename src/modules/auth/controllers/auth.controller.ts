@@ -7,13 +7,15 @@ import { SmsProvidersEnum } from '../../sms/enum/providers.enum';
 import { AuthService } from '../services/auth.service';
 import { SendOtpDto } from '../dto/send-otp.dto';
 import { CheckOtpDto } from '../dto/check-otp.dto';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Controller("auth")
 @ApiTags("Auth")
 export class AuthController {
 	constructor(
 		private readonly authService: AuthService,
-		private readonly smsService: SmsService
+		private readonly smsService: SmsService,
+		private readonly i18n: I18nService
 	) { }
 
 	/**
@@ -37,7 +39,7 @@ export class AuthController {
 		}
 
 		return {
-			message: "Code has been sent successfully",
+			message: this.i18n.t('locale.AuthMessages.SentOTP', { lang: I18nContext?.current()?.lang }),
 			otp: process.env.NODE_ENV === "dev" ? otp : undefined,
 		}
 	}

@@ -1,0 +1,24 @@
+{
+	"PublicMessages": {
+		"Successfully": "The process ended successfully"
+	},
+	"MulterMessages": {
+		"InvalidFile": "Invalid file type"
+	},
+	"AuthMessages": {
+		"SentOTP": "OTP code has been sent successfully",
+		"LoginSuccess": "You have logged in successfully",
+		"AuthFailed": "Authentication failed. Please try again",
+		"OTPNotExpired": "The OTP code has not expired yet",
+		"AccountNotFound": "Account not found",
+		"ExpiredOTP": "The OTP code has expired",
+		"InvalidToken": "Invalid access token"
+	},
+	"ValidationMessages": {
+		"InvalidPhoneNumFormat": "Invalid phone number format",
+		"InvalidOtpCodeFormat": "Invalid OTP code format"
+	},
+	"BadRequestMessages": {
+		"UnsupportedSmsProvider": "Unsupported SMS provider"
+	}
+}

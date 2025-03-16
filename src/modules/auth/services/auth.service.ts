@@ -8,6 +8,7 @@ import { TokenService } from './token.service';
 import { SendOtpDto } from '../dto/send-otp.dto';
 import { CheckOtpDto } from '../dto/check-otp.dto';
 import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,8 @@ export class AuthService {
 		private otpRepository: Repository<OtpEntity>,
 		// Register token service
 		private tokenService: TokenService,
+		// Register i18n service
+		private readonly i18n: I18nService
 	) { }
 
 	/**
@@ -69,9 +72,11 @@ export class AuthService {
 		const existingOtp: OtpEntity | null = await this.otpRepository.findOneBy({ userId });
 
 		// If an OTP exists and is still valid, throw an error
-		// if (existingOtp && existingOtp.expires_in > new Date()) {
-		// 	throw new BadRequestException("OTP code has not expired yet.");
-		// }
+		if (existingOtp && existingOtp.expires_in > new Date()) {
+			throw new BadRequestException(this.i18n.t('locale.AuthMessages.OTPNotExpired', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
 
 		// Update the existing OTP if found, otherwise create a new one
 		const otp = existingOtp
@@ -102,15 +107,25 @@ export class AuthService {
 
 		// Retrieve user's data
 		const user = await this.getUser(phone);
-		if (!user) throw new NotFoundException("User not found");
+		if (!user) {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
 
 		// Retrieve OTP data
 		const otp = await this.otpRepository.findOne({ where: { userId: user.id, code } });
-		if (!otp) throw new UnauthorizedException("Invalid or expired OTP code");
+		if (!otp) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.ExpiredOTP', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
 
 		// Validate OTP expiration
 		if (otp.expires_in < new Date()) {
-			throw new UnauthorizedException("OTP code has expired, please request a new one.");
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.ExpiredOTP', {
+				lang: I18nContext?.current()?.lang
+			}));
 		}
 
 		// Generate an access token
@@ -122,7 +137,7 @@ export class AuthService {
 		}
 
 		return {
-			message: "You have logged in successfully",
+			message: this.i18n.t('locale.AuthMessages.LoginSuccess', { lang: I18nContext?.current()?.lang }),
 			accessToken,
 		};
 	}
@@ -142,7 +157,9 @@ export class AuthService {
 
 		// throw error if user was not found
 		if (!user) {
-			throw new UnauthorizedException("Authorization failed, please retry");
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.AuthFailed', {
+				lang: I18nContext?.current()?.lang
+			}));
 		}
 
 		return user;

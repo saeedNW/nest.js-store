@@ -1,12 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TJwtOtpPayload } from '../types/jwt-payload.type';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class TokenService {
 	constructor(
 		// register jwt service
-		private jwtService: JwtService
+		private jwtService: JwtService,
+		// Register i18n service
+		private readonly i18n: I18nService
 	) { }
 
 	/**
@@ -35,12 +38,16 @@ export class TokenService {
 
 			/** Throw error in case of invalid payload */
 			if (typeof payload !== "object" || !("userId" in payload)) {
-				throw new UnauthorizedException("Invalid Token");
+				throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidToken', {
+					lang: I18nContext?.current()?.lang
+				}));
 			}
 
 			return payload;
 		} catch (error) {
-			throw new UnauthorizedException("Authorization failed, please retry");
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.AuthFailed', {
+				lang: I18nContext?.current()?.lang
+			}));
 		}
 	}
 }

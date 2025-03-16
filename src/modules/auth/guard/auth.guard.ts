@@ -9,6 +9,7 @@ import { Request } from "express";
 import { Reflector } from "@nestjs/core";
 import { AuthService } from "../services/auth.service";
 import { SKIP_AUTH } from "src/common/decorator/skip-auth.decorator";
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 /**
  * Guard to protect routes by validating access tokens.
@@ -27,7 +28,9 @@ export class AuthGuard implements CanActivate {
 		// Register auth service
 		private authService: AuthService,
 		// Register reflector which contains request's metadata
-		private reflector: Reflector
+		private reflector: Reflector,
+		// Register i18n service
+		private readonly i18n: I18nService
 	) { }
 
 	async canActivate(context: ExecutionContext): Promise<boolean> | never {
@@ -65,15 +68,20 @@ export class AuthGuard implements CanActivate {
 
 		// throw an error if authorization header was not set or if it was empty
 		if (!authorization || authorization?.trim() == "") {
-			throw new UnauthorizedException("Authorization failed, please retry");
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.AuthFailed', {
+				lang: I18nContext?.current()?.lang
+			}));
 		}
 
 		// separate token from bearer keyword
 		const [bearer, token] = authorization?.split(" ");
 
 		// throw error if the bearer keyword or the token were invalid
-		if (bearer?.toLowerCase() !== "bearer" || !token || !isJWT(token))
-			throw new UnauthorizedException("Authorization failed, please retry");
+		if (bearer?.toLowerCase() !== "bearer" || !token || !isJWT(token)) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.AuthFailed', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
 
 		// return the access token
 		return token;

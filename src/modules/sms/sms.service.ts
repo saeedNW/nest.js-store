@@ -1,9 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { SmsProvidersEnum } from './enum/providers.enum';
 import { SmsProvider } from './providers/sms.provider';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class SmsService {
+	constructor(
+		// Register i18n service
+		private readonly i18n: I18nService
+	) { }
+
 	private availableProviders = new Map<SmsProvidersEnum, SmsProvider>();
 
 	/**
@@ -30,7 +36,9 @@ export class SmsService {
 
 		// Throw an error if provider is not available
 		if (!provider) {
-			throw new BadRequestException('Unsupported sms provider');
+			throw new BadRequestException(this.i18n.t('locale.BadRequestMessages.UnsupportedSmsProvider', {
+				lang: I18nContext?.current()?.lang
+			}));
 		}
 
 		// Send the OTP
