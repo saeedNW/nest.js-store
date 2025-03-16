@@ -20,7 +20,7 @@ export class TokenService {
 	createAccessToken(payload: TJwtOtpPayload): string {
 		return this.jwtService.sign(payload, {
 			secret: process.env.ACCESS_TOKEN_SECRET,
-			expiresIn: "1y",
+			expiresIn: "30d",
 		});
 	}
 
