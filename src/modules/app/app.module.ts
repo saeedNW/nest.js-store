@@ -10,6 +10,7 @@ import { SmsModule } from '../sms/sms.module';
 import { AuthModule } from '../auth/auth.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import * as path from 'path';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
 	imports: [
@@ -39,6 +40,7 @@ import * as path from 'path';
 		UserModule,
 		SmsModule,
 		AuthModule,
+		RedisModule
 	],
 	controllers: [AppController],
 	providers: [AppService],

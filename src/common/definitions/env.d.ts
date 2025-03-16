@@ -21,6 +21,11 @@ namespace NodeJS {
 		DB_HOST: string;
 
 		/** SMS.ir */
+		REDIS_HOST: string;
+		REDIS_PORT: number;
+		REDIS_PASSWORD: string;
+
+		/** SMS.ir */
 		SMS_IR_API_KEY: string;
 		SMS_IR_SEND_URL: string;
 
