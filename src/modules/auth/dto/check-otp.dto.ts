@@ -8,8 +8,10 @@ export class CheckOtpDto {
 	@IsString()
 	// @IsPhoneNumber("IR", { message: "Invalid phone number" })
 	@IsPhoneNumber("IR", {
-		message: (args: ValidationArguments) =>
-			String(I18nContext.current()?.t('locale.ValidationMessages.InvalidPhoneNumFormat')),
+		message(validationArguments) {
+			return String(I18nContext.current()?.t('locale.ValidationMessages.InvalidPhoneNumFormat'))
+
+		},
 	})
 	@Expose()
 	phone: string;
@@ -18,8 +20,9 @@ export class CheckOtpDto {
 	@IsString()
 	// @Length(5, 5, { message: "Invalid OTP code" })
 	@Length(5, 5, {
-		message: (args: ValidationArguments) =>
-			String(I18nContext.current()?.t('locale.ValidationMessages.InvalidOtpCodeFormat')),
+		message(validationArguments) {
+			return String(I18nContext.current()?.t('locale.ValidationMessages.InvalidOtpCodeFormat'))
+		},
 	})
 	@Expose()
 	code: string;

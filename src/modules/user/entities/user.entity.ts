@@ -18,6 +18,8 @@ export class UserEntity extends BaseTimestampedEntity {
 	verify_phone: boolean;
 	@Column({ nullable: true })
 	password: string;
+	@Column({ nullable: true })
+	token: string;
 	@OneToMany(() => AddressEntity, (address) => address.user)
 	address: AddressEntity[];
 	@Column({ nullable: true })

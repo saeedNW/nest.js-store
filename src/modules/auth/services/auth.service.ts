@@ -10,6 +10,7 @@ import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { TOtpObject } from '../types/otp.type';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -93,9 +94,8 @@ export class AuthService {
 	/**
 	 * Verifies an OTP code and logs in the user
 	 * @param {CheckOtpDto} checkOtpDto - DTO containing phone and OTP code
-	 * @returns {Promise<{ message: string; accessToken: string }>}
 	 */
-	async checkOtp(checkOtpDto: CheckOtpDto): Promise<{ message: string; accessToken: string }> {
+	async checkOtp(checkOtpDto: CheckOtpDto) {
 		// extract phone number and OTP code from client data
 		const { code, phone } = checkOtpDto;
 
@@ -116,6 +116,7 @@ export class AuthService {
 		}
 
 		//? NOTE: Since Redis TTL already ensures expiration of the OTP, we don't need to check the expiration here
+
 		// Validate OTP code
 		if (otp.code !== code) {
 			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidOtpCode', {
@@ -123,17 +124,54 @@ export class AuthService {
 			}));
 		}
 
-		// Generate an access token
-		const accessToken = this.tokenService.createAccessToken({ userId: user.id });
+		// Generate access and refresh tokens concurrently
+		const [accessToken, refreshToken] = await Promise.all([
+			this.tokenService.createAccessToken({ userId: user.id }),
+			this.tokenService.createRefreshToken({ phone: user.phone }),
+		]);
+
+		// Update user access token
+		const updateUserData: { token: string, verify_phone?: boolean } = {
+			token: accessToken
+		}
 
 		// Verify user's phone number if not already verified
 		if (!user.verify_phone) {
-			await this.userRepository.update({ id: user.id }, { verify_phone: true });
+			updateUserData.verify_phone = true
 		}
+
+		// Update user data
+		await this.userRepository.update({ id: user.id }, updateUserData);
 
 		return {
 			message: this.i18n.t('locale.AuthMessages.LoginSuccess', { lang: I18nContext?.current()?.lang }),
 			accessToken,
+			refreshToken
+		};
+	}
+
+	/**
+	 * Refresh client's access token
+	 * @param {string} token - Client's refresh token
+	 * @returns Return new access and refresh tokens
+	 */
+	async refreshAccessToken(token: string) {
+		// retrieve user's data using refresh token
+		const user: UserEntity = await this.validateRefreshToken(token);
+
+		// Generate new access and refresh tokens concurrently
+		const [accessToken, refreshToken] = await Promise.all([
+			this.tokenService.createAccessToken({ userId: user.id }),
+			this.tokenService.createRefreshToken({ phone: user.phone }),
+		]);
+
+		// Update user access token
+		await this.userRepository.update({ id: user.id }, { token: accessToken });
+
+		return {
+			message: this.i18n.t('locale.AuthMessages.LoginSuccess', { lang: I18nContext?.current()?.lang }),
+			accessToken,
+			refreshToken
 		};
 	}
 
@@ -148,11 +186,41 @@ export class AuthService {
 		const { userId } = this.tokenService.verifyAccessToken(token);
 
 		// retrieve user's data from database
-		const user = await this.userRepository.findOne({ where: { id: userId }, relations: ["profile"], });
+		const user = await this.userRepository.findOne({ where: { id: userId, token }, relations: ["profile"], });
 
 		// throw error if user was not found
 		if (!user) {
 			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.AuthFailed', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		return user;
+	}
+
+	/**
+	 * Validate client's refresh token
+	 * @param {string} token - Client's refresh token
+	 * @returns {Promise<UserEntity>} - Return user's data
+	 */
+	async validateRefreshToken(token: string): Promise<UserEntity> {
+		// extract user's phone from refresh token
+		const { phone } = this.tokenService.verifyRefreshToken(token);
+
+		// Retrieve user's data
+		const user = await this.getUser(phone);
+		if (!user) {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		// retrieve existing refresh token from redis
+		const existingRefreshToken = await this.redis.get(`refresh_${phone}`);
+
+		// Validate refresh toke
+		if (token !== existingRefreshToken) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidRefreshToken', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}

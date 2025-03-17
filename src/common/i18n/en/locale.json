@@ -13,11 +13,13 @@
 		"AccountNotFound": "Account not found",
 		"ExpiredOTP": "The OTP code has expired",
 		"InvalidAccessToken": "Invalid access token",
+		"InvalidRefreshToken": "Invalid refresh token",
 		"InvalidOtpCode": "Invalid OTP code"
 	},
 	"ValidationMessages": {
 		"InvalidPhoneNumFormat": "Invalid phone number format",
-		"InvalidOtpCodeFormat": "Invalid OTP code format"
+		"InvalidOtpCodeFormat": "Invalid OTP code format",
+		"InvalidRefreshTokenFormat": "Invalid refresh token format"
 	},
 	"BadRequestMessages": {
 		"UnsupportedSmsProvider": "Unsupported SMS provider"

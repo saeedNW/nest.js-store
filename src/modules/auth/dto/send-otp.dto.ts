@@ -7,8 +7,10 @@ export class SendOtpDto {
 	@ApiProperty()
 	@IsString()
 	@IsPhoneNumber("IR", {
-		message: (args: ValidationArguments) =>
-			String(I18nContext.current()?.t('locale.ValidationMessages.InvalidPhoneNum')),
+		message(validationArguments) {
+			return String(I18nContext.current()?.t('locale.ValidationMessages.InvalidPhoneNumFormat'))
+
+		},
 	})
 	@Expose()
 	phone: string;

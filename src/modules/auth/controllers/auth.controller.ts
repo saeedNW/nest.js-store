@@ -8,6 +8,7 @@ import { AuthService } from '../services/auth.service';
 import { SendOtpDto } from '../dto/send-otp.dto';
 import { CheckOtpDto } from '../dto/check-otp.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
 
 @Controller("auth")
 @ApiTags("Auth")
@@ -57,5 +58,20 @@ export class AuthController {
 		});
 
 		return this.authService.checkOtp(checkOtpDto);
+	}
+
+	/**
+	 * Refresh client's access token
+	 * @param refreshTokenDto - Client refresh token
+	 */
+	@Post("/refresh")
+	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+		// filter client data and remove unwanted data
+		refreshTokenDto = plainToClass(RefreshTokenDto, refreshTokenDto, {
+			excludeExtraneousValues: true,
+		});
+
+		return this.authService.refreshAccessToken(refreshTokenDto.refreshToken);
 	}
 }
