@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
-import { IsJWT, IsNotEmpty } from "class-validator";
+import { IsJWT } from "class-validator";
 import { I18nContext } from 'nestjs-i18n';
 
 export class RefreshTokenDto {
