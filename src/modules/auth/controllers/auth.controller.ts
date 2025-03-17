@@ -35,9 +35,7 @@ export class AuthController {
 		const otp: string = await this.authService.createOtp(sendOtpDto);
 
 		// Send OTP code to user's phone number
-		if (process.env?.NODE_ENV === "prod") {
-			await this.smsService.sendOtp(sendOtpDto.phone, otp, SmsProvidersEnum.SMS_IR)
-		}
+		await this.smsService.sendOtp(sendOtpDto.phone, otp, SmsProvidersEnum.SMS_IR)
 
 		return {
 			message: this.i18n.t('locale.AuthMessages.SentOTP', { lang: I18nContext?.current()?.lang }),

@@ -30,7 +30,10 @@ export class SmsService {
 	 * @param {string} code - The OTP code to be sent.
 	 * @param {SmsProvidersEnum} smsProvider - The SMS provider to be used for sending the OTP.
 	 */
-	public async sendOtp(phone: string, code: string, smsProvider: SmsProvidersEnum): Promise<void> {
+	public async sendOtp(phone: string, code: string, smsProvider: SmsProvidersEnum): Promise<boolean | void> {
+		// Prevent sending the OTP if the environment is not production
+		if (process.env.NODE_ENV !== "prod") return true;
+
 		// Check if the provider is available
 		const provider = this.availableProviders.get(smsProvider);
 
