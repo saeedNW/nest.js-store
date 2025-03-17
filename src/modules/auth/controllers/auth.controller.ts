@@ -20,6 +20,23 @@ export class AuthController {
 	) { }
 
 	/**
+	 * Check account existence
+	 * @param {SendOtpDto} sendOtpDto - Client data need to check account existence
+	 * @returns Return true if account exists otherwise return false
+	 */
+	@Post("/exists")
+	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	async existsAccount(@Body() sendOtpDto: SendOtpDto) {
+		// filter client data and remove unwanted data
+		sendOtpDto = plainToClass(SendOtpDto, sendOtpDto, {
+			excludeExtraneousValues: true,
+		});
+
+		// Check account existence
+		return await this.authService.existsAccount(sendOtpDto);
+	}
+
+	/**
 	 * create and send OTP code to user's phone number
 	 * @param {SendOtpDto} sendOtpDto - Client data need to generate and send OTP code
 	 */

@@ -27,7 +27,22 @@ export class AuthService {
 	) { }
 
 	/**
-	 *
+	 * Check account existence
+	 * @param {SendOtpDto} sendOtpDto - Client data need to check account existence
+	 * @returns Return true if account exists otherwise return false
+	 */
+	async existsAccount(sendOtpDto: SendOtpDto){
+		// extract phone number from client data
+		const { phone } = sendOtpDto;
+
+		// retrieve user's data from database
+		let user: UserEntity | null = await this.getUser(phone);
+
+		return { exists: !!user };
+	}
+
+	/**
+	 * Create OTP code
 	 * @param {SendOtpDto} sendOtpDto - Client data need to generate and send OTP code
 	 * @returns {Promise<string>} - Return the generated OTP code
 	 */
