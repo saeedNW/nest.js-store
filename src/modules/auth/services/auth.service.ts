@@ -10,7 +10,8 @@ import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { TOtpObject } from '../types/otp.type';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { LoginDto } from '../dto/login.dto';
+import { compareSync } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -117,7 +118,7 @@ export class AuthService {
 		// Retrieve user's data
 		const user = await this.getUser(phone);
 		if (!user) {
-			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
+			throw new NotFoundException(this.i18n.t('locale.AuthMessages.AccountNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}
@@ -191,6 +192,59 @@ export class AuthService {
 	}
 
 	/**
+	 * Clients' login process
+	 * @param {LoginDto} loginDto - Client credentials
+	 */
+	async login(loginDto: LoginDto) {
+		// extract phone number and password from client data
+		const { password, phone } = loginDto;
+
+		// Retrieve user's data
+		const user = await this.getUser(phone);
+		if (!user) {
+			throw new NotFoundException(this.i18n.t('locale.AuthMessages.AccountNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		// Verify if user's phone number is verified
+		if (!user.verify_phone) {
+			throw new BadRequestException(this.i18n.t('locale.AuthMessages.NotVerifiedPhone', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		// Ensure both password and user.password are defined before comparing
+		if (!password || !user.password) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidCredential', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		// Verify user's password
+		if (!compareSync(password, user.password)) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidCredential', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		// Generate access and refresh tokens concurrently
+		const [accessToken, refreshToken] = await Promise.all([
+			this.tokenService.createAccessToken({ userId: user.id }),
+			this.tokenService.createRefreshToken({ phone: user.phone }),
+		]);
+
+		// Update user access token
+		await this.userRepository.update({ id: user.id }, { token: accessToken });
+
+		return {
+			message: this.i18n.t('locale.AuthMessages.LoginSuccess', { lang: I18nContext?.current()?.lang }),
+			accessToken,
+			refreshToken
+		};
+	}
+
+	/**
 	 * Clients' access token validation process
 	 * @param {string} token - Access token retrieved from client's request
 	 * @throws {UnauthorizedException} - In case of invalid token throw "Unauthorized Exception" error
@@ -225,7 +279,7 @@ export class AuthService {
 		// Retrieve user's data
 		const user = await this.getUser(phone);
 		if (!user) {
-			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
+			throw new NotFoundException(this.i18n.t('locale.AuthMessages.AccountNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}

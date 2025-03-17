@@ -9,6 +9,7 @@ import { SendOtpDto } from '../dto/send-otp.dto';
 import { CheckOtpDto } from '../dto/check-otp.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { LoginDto } from '../dto/login.dto';
 
 @Controller("auth")
 @ApiTags("Auth")
@@ -88,5 +89,20 @@ export class AuthController {
 		});
 
 		return this.authService.refreshAccessToken(refreshTokenDto.refreshToken);
+	}
+
+	/**
+	 * Clients' login process
+	 * @param {LoginDto} loginDto - Client credentials
+	 */
+	@Post("/login")
+	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	register(@Body() loginDto: LoginDto) {
+		// filter client data and remove unwanted data
+		loginDto = plainToClass(LoginDto, loginDto, {
+			excludeExtraneousValues: true,
+		});
+
+		return this.authService.login(loginDto);
 	}
 }

@@ -12,14 +12,17 @@
 		"OTPNotExpired": "The OTP code has not expired yet",
 		"AccountNotFound": "Account not found",
 		"ExpiredOTP": "The OTP code has expired",
+		"NotVerifiedPhone": "No account with this number was found",
 		"InvalidAccessToken": "Invalid access token",
 		"InvalidRefreshToken": "Invalid refresh token",
-		"InvalidOtpCode": "Invalid OTP code"
+		"InvalidOtpCode": "Invalid OTP code",
+		"InvalidCredential": "Invalid credential"
 	},
 	"ValidationMessages": {
 		"InvalidPhoneNumFormat": "Invalid phone number format",
 		"InvalidOtpCodeFormat": "Invalid OTP code format",
-		"InvalidRefreshTokenFormat": "Invalid refresh token format"
+		"InvalidRefreshTokenFormat": "Invalid refresh token format",
+		"EmptyPassword": "Password cannot be EmptyPassword"
 	},
 	"BadRequestMessages": {
 		"UnsupportedSmsProvider": "Unsupported SMS provider"
