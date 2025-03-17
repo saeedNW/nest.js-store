@@ -12,7 +12,8 @@
 		"OTPNotExpired": "The OTP code has not expired yet",
 		"AccountNotFound": "Account not found",
 		"ExpiredOTP": "The OTP code has expired",
-		"InvalidToken": "Invalid access token"
+		"InvalidAccessToken": "Invalid access token",
+		"InvalidOtpCode": "Invalid OTP code"
 	},
 	"ValidationMessages": {
 		"InvalidPhoneNumFormat": "Invalid phone number format",

@@ -2,13 +2,14 @@ import { BadRequestException, Injectable, NotFoundException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { OtpEntity } from '../../user/entities/otp.entity';
 import { randomInt } from 'crypto';
 import { TokenService } from './token.service';
 import { SendOtpDto } from '../dto/send-otp.dto';
 import { CheckOtpDto } from '../dto/check-otp.dto';
 import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
 import { I18nContext, I18nService } from 'nestjs-i18n';
+import { RedisService } from 'src/modules/redis/redis.service';
+import { TOtpObject } from '../types/otp.type';
 
 @Injectable()
 export class AuthService {
@@ -16,13 +17,12 @@ export class AuthService {
 		// inject user repository
 		@InjectRepository(UserEntity)
 		private userRepository: Repository<UserEntity>,
-		// inject otp repository
-		@InjectRepository(OtpEntity)
-		private otpRepository: Repository<OtpEntity>,
 		// Register token service
 		private tokenService: TokenService,
 		// Register i18n service
-		private readonly i18n: I18nService
+		private readonly i18n: I18nService,
+		// Register redis service
+		private readonly redis: RedisService
 	) { }
 
 	/**
@@ -44,7 +44,7 @@ export class AuthService {
 		}
 
 		// Generates a new OTP
-		const otp: OtpEntity = await this.saveOtp(user.id);
+		const otp: TOtpObject = await this.saveOtp(user.id);
 
 		// Return the OTP code
 		return otp.code;
@@ -60,40 +60,34 @@ export class AuthService {
 
 	/**
 	 * Generates a new OTP and stores it in the database.
-	 * @param {number} userId - he user's ID
-	 * @returns {Promise<OtpEntity>} - The created or updated OTP entity
+	 * @param {number} userId - The user's ID
+	 * @returns {Promise<TOtpObject>} - The created or updated OTP
 	 */
-	async saveOtp(userId: number): Promise<OtpEntity> {
-		// Generate a random 5-digit OTP code
-		const code: string = randomInt(10000, 99999).toString();
-		// Set expiration time to 2 minutes from now
-		const expires_in = new Date(Date.now() + 2 * 60 * 1000);
+	async saveOtp(userId: number): Promise<TOtpObject> {
+		// Generate OTP data object
+		const otp: TOtpObject = {
+			// Generate a random 5-digit OTP code
+			code: randomInt(10000, 99999).toString(),
+			// Set expiration time to 2 minutes from now
+			expires_in: new Date(Date.now() + 2 * 60 * 1000),
+			// Set the user's ID
+			userId
+		}
+
 		// Check if an existing OTP is associated with the user
-		const existingOtp: OtpEntity | null = await this.otpRepository.findOneBy({ userId });
+		const existingOtp: TOtpObject | null = await this.redis.get(`OTP_${userId}`)
 
 		// If an OTP exists and is still valid, throw an error
-		if (existingOtp && existingOtp.expires_in > new Date()) {
+		if (existingOtp && new Date(existingOtp.expires_in) > new Date()) {
 			throw new BadRequestException(this.i18n.t('locale.AuthMessages.OTPNotExpired', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}
 
-		// Update the existing OTP if found, otherwise create a new one
-		const otp = existingOtp
-			? Object.assign(existingOtp, { code, expires_in }) // Update the existing OTP
-			: this.otpRepository.create({ userId, code, expires_in }); // Create a new OTP
+		// Save the OTP in redis
+		await this.redis.set(`OTP_${userId}`, otp, 60 * 2)
 
-		// Use a transaction to ensure data consistency when saving OTP and updating the user
-		return await this.otpRepository.manager.transaction(async (manager) => {
-			const savedOtp = await manager.save(otp);
-
-			// If OTP is newly created, update the user
-			if (!existingOtp) {
-				await manager.update(UserEntity, { id: userId }, { otpId: savedOtp.id });
-			}
-
-			return savedOtp;
-		});
+		return otp;
 	}
 
 	/**
@@ -114,16 +108,17 @@ export class AuthService {
 		}
 
 		// Retrieve OTP data
-		const otp = await this.otpRepository.findOne({ where: { userId: user.id, code } });
+		const otp = await this.redis.get(`OTP_${user.id}`);
 		if (!otp) {
 			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.ExpiredOTP', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}
 
-		// Validate OTP expiration
-		if (otp.expires_in < new Date()) {
-			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.ExpiredOTP', {
+		//? NOTE: Since Redis TTL already ensures expiration of the OTP, we don't need to check the expiration here
+		// Validate OTP code
+		if (otp.code !== code) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidOtpCode', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}

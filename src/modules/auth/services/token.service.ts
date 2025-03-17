@@ -31,14 +31,14 @@ export class TokenService {
 	 */
 	verifyAccessToken(token: string): TJwtOtpPayload {
 		try {
-			/** Verify access token */
+			// Verify access token
 			const payload = this.jwtService.verify(token, {
 				secret: process.env.ACCESS_TOKEN_SECRET,
 			});
 
-			/** Throw error in case of invalid payload */
+			// Throw error in case of invalid payload
 			if (typeof payload !== "object" || !("userId" in payload)) {
-				throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidToken', {
+				throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidAccessToken', {
 					lang: I18nContext?.current()?.lang
 				}));
 			}
