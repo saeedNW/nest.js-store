@@ -2,14 +2,14 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/configs/swagger.config';
 import { plainToClass } from 'class-transformer';
-import { SmsService } from '../../sms/sms.service';
-import { SmsProvidersEnum } from '../../sms/enum/providers.enum';
-import { AuthService } from '../services/auth.service';
-import { SendOtpDto } from '../dto/send-otp.dto';
-import { CheckOtpDto } from '../dto/check-otp.dto';
+import { SmsService } from '../sms/sms.service';
+import { SmsProvidersEnum } from '../sms/enum/providers.enum';
+import { AuthService } from './auth.service';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { CheckOtpDto } from './dto/check-otp.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
-import { LoginDto } from '../dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller("auth")
 @ApiTags("Auth")

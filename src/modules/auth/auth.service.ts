@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { randomInt } from 'crypto';
 import { TokenService } from './token.service';
-import { SendOtpDto } from '../dto/send-otp.dto';
-import { CheckOtpDto } from '../dto/check-otp.dto';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { CheckOtpDto } from './dto/check-otp.dto';
 import { ProfileEntity } from 'src/modules/user/entities/profile.entity';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RedisService } from 'src/modules/redis/redis.service';
-import { TOtpObject } from '../types/otp.type';
-import { LoginDto } from '../dto/login.dto';
+import { TOtpObject } from './types/otp.type';
+import { LoginDto } from './dto/login.dto';
 import { compareSync } from 'bcrypt';
 
 @Injectable()

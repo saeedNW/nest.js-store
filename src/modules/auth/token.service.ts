@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TJwtOtpPayload, TJwtRefreshTokenPayload } from '../types/jwt-payload.type';
+import { TJwtOtpPayload, TJwtRefreshTokenPayload } from './types/jwt-payload.type';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RedisService } from 'src/modules/redis/redis.service';
 

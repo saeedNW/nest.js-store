@@ -7,7 +7,7 @@ import {
 import { isJWT } from "class-validator";
 import { Request } from "express";
 import { Reflector } from "@nestjs/core";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../auth.service";
 import { SKIP_AUTH } from "src/common/decorator/skip-auth.decorator";
 import { I18nContext, I18nService } from 'nestjs-i18n';
 
