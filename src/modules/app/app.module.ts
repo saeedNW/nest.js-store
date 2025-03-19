@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfig } from 'src/configs/typeorm.config';
 import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { resolve } from 'path';
 import { SmsModule } from '../sms/sms.module';
 import { AuthModule } from '../auth/auth.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
@@ -16,7 +15,7 @@ import { RedisModule } from '../redis/redis.module';
 	imports: [
 		// Load ENVs
 		ConfigModule.forRoot({
-			envFilePath: resolve(".env"),
+			envFilePath: path.resolve(".env"),
 			isGlobal: true,
 		}),
 
