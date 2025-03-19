@@ -32,7 +32,7 @@ export class AuthService {
 	 * @param {SendOtpDto} sendOtpDto - Client data need to check account existence
 	 * @returns Return true if account exists otherwise return false
 	 */
-	async existsAccount(sendOtpDto: SendOtpDto){
+	async accountExistence(sendOtpDto: SendOtpDto){
 		// extract phone number from client data
 		const { phone } = sendOtpDto;
 

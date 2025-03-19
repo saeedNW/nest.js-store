@@ -1,5 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/configs/swagger.config';
 import { plainToClass } from 'class-transformer';
 import { SmsService } from '../sms/sms.service';
@@ -10,6 +10,7 @@ import { CheckOtpDto } from './dto/check-otp.dto';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LoginDto } from './dto/login.dto';
+import { AccountExistenceResponses, CheckOtpResponses, LoginResponses, RefreshTokenResponses, SendOtpResponses } from './decorators/swagger-responses.decorator';
 
 @Controller("auth")
 @ApiTags("Auth")
@@ -26,15 +27,18 @@ export class AuthController {
 	 * @returns Return true if account exists otherwise return false
 	 */
 	@Post("/exists")
+	@HttpCode(200)
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	async existsAccount(@Body() sendOtpDto: SendOtpDto) {
+	@ApiOperation({ summary: "Check if an account already exists" })
+	@AccountExistenceResponses()
+	async accountExistence(@Body() sendOtpDto: SendOtpDto) {
 		// filter client data and remove unwanted data
 		sendOtpDto = plainToClass(SendOtpDto, sendOtpDto, {
 			excludeExtraneousValues: true,
 		});
 
 		// Check account existence
-		return await this.authService.existsAccount(sendOtpDto);
+		return await this.authService.accountExistence(sendOtpDto);
 	}
 
 	/**
@@ -43,6 +47,7 @@ export class AuthController {
 	 */
 	@Post("/send-otp")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@SendOtpResponses()
 	async sendOtp(@Body() sendOtpDto: SendOtpDto) {
 		// filter client data and remove unwanted data
 		sendOtpDto = plainToClass(SendOtpDto, sendOtpDto, {
@@ -55,10 +60,15 @@ export class AuthController {
 		// Send OTP code to user's phone number
 		await this.smsService.sendOtp(sendOtpDto.phone, otp, SmsProvidersEnum.SMS_IR)
 
-		return {
+		const response: { message: string, code?: string } = {
 			message: this.i18n.t('locale.AuthMessages.SentOTP', { lang: I18nContext?.current()?.lang }),
-			otp: process.env.NODE_ENV === "dev" ? otp : undefined,
 		}
+
+		if (process.env.NODE_ENV === "dev") {
+			response.code = otp
+		}
+
+		return response;
 	}
 
 	/**
@@ -67,6 +77,7 @@ export class AuthController {
 	 */
 	@Post("/check-otp")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@CheckOtpResponses()
 	checkOtp(@Body() checkOtpDto: CheckOtpDto) {
 		// filter client data and remove unwanted data
 		checkOtpDto = plainToClass(CheckOtpDto, checkOtpDto, {
@@ -82,6 +93,8 @@ export class AuthController {
 	 */
 	@Post("/refresh")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@ApiOperation({ summary: "tokens renewal using refresh token" })
+	@RefreshTokenResponses()
 	refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
 		// filter client data and remove unwanted data
 		refreshTokenDto = plainToClass(RefreshTokenDto, refreshTokenDto, {
@@ -97,6 +110,8 @@ export class AuthController {
 	 */
 	@Post("/login")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@ApiOperation({ summary: "Login using phone and password" })
+	@LoginResponses()
 	register(@Body() loginDto: LoginDto) {
 		// filter client data and remove unwanted data
 		loginDto = plainToClass(LoginDto, loginDto, {
