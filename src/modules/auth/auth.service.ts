@@ -12,6 +12,7 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { TOtpObject } from './types/otp.type';
 import { LoginDto } from './dto/login.dto';
 import { compareSync } from 'bcrypt';
+import { fixDataNumbers } from 'src/common/utils/number.utils';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +35,7 @@ export class AuthService {
 	 */
 	async accountExistence(sendOtpDto: SendOtpDto){
 		// extract phone number from client data
-		const { phone } = sendOtpDto;
+		const { phone } = fixDataNumbers(sendOtpDto);
 
 		// retrieve user's data from database
 		let user: UserEntity | null = await this.getUser(phone);
@@ -49,7 +50,7 @@ export class AuthService {
 	 */
 	async createOtp(sendOtpDto: SendOtpDto): Promise<string> {
 		// extract phone number from client data
-		const { phone } = sendOtpDto;
+		const { phone } = fixDataNumbers(sendOtpDto);
 
 		// retrieve user's data from database
 		let user: UserEntity | null = await this.getUser(phone);
@@ -113,7 +114,7 @@ export class AuthService {
 	 */
 	async checkOtp(checkOtpDto: CheckOtpDto) {
 		// extract phone number and OTP code from client data
-		const { code, phone } = checkOtpDto;
+		const { code, phone } = fixDataNumbers(checkOtpDto);
 
 		// Retrieve user's data
 		const user = await this.getUser(phone);
@@ -197,7 +198,7 @@ export class AuthService {
 	 */
 	async login(loginDto: LoginDto) {
 		// extract phone number and password from client data
-		const { password, phone } = loginDto;
+		const { password, phone } = fixDataNumbers(loginDto);
 
 		// Retrieve user's data
 		const user = await this.getUser(phone);
