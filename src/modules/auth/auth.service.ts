@@ -12,7 +12,7 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { TOtpObject } from './types/otp.type';
 import { LoginDto } from './dto/login.dto';
 import { compareSync } from 'bcrypt';
-import { fixDataNumbers } from 'src/common/utils/number.utils';
+import { fixDataNumbers } from 'src/common/utils/number.utility';
 
 @Injectable()
 export class AuthService {
@@ -119,7 +119,7 @@ export class AuthService {
 		// Retrieve user's data
 		const user = await this.getUser(phone);
 		if (!user) {
-			throw new NotFoundException(this.i18n.t('locale.AuthMessages.AccountNotFound', {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}
@@ -203,7 +203,7 @@ export class AuthService {
 		// Retrieve user's data
 		const user = await this.getUser(phone);
 		if (!user) {
-			throw new NotFoundException(this.i18n.t('locale.AuthMessages.AccountNotFound', {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}
@@ -280,7 +280,7 @@ export class AuthService {
 		// Retrieve user's data
 		const user = await this.getUser(phone);
 		if (!user) {
-			throw new NotFoundException(this.i18n.t('locale.AuthMessages.AccountNotFound', {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}

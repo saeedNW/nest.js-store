@@ -10,7 +10,6 @@
 		"LoginSuccess": "You have logged in successfully",
 		"AuthFailed": "Authentication failed. Please try again",
 		"OTPNotExpired": "The OTP code has not expired yet",
-		"AccountNotFound": "Account not found",
 		"ExpiredOTP": "The OTP code has expired",
 		"NotVerifiedPhone": "No account with this number was found",
 		"InvalidAccessToken": "Invalid access token",
@@ -26,5 +25,8 @@
 	},
 	"BadRequestMessages": {
 		"UnsupportedSmsProvider": "Unsupported SMS provider"
+	},
+	"NotFoundMessages": {
+		"AccountNotFound": "Account not found"
 	}
 }
