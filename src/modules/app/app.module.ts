@@ -10,6 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { RedisModule } from '../redis/redis.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
 	imports: [
@@ -36,10 +37,11 @@ import { RedisModule } from '../redis/redis.module';
 		TypeOrmModule.forRoot(TypeOrmConfig()),
 
 		// Modules
+		RedisModule,
 		UserModule,
 		SmsModule,
 		AuthModule,
-		RedisModule
+		RoleModule
 	],
 	controllers: [AppController],
 	providers: [AppService],

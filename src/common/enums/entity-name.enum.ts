@@ -2,5 +2,7 @@ export enum EntityName {
 	USER = "user",
 	USER_ADDRESS = "user_address",
 	OTP = "otp",
-	PROFILE = "profile"
+	PROFILE = "profile",
+	ROLE = "role",
+	PERMISSION = "permission"
 }

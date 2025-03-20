@@ -1,8 +1,9 @@
 import { BaseTimestampedEntity } from "src/common/abstracts/base.entity";
 import { EntityName } from "src/common/enums/entity-name.enum";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { AddressEntity } from "./address.entity";
 import { ProfileEntity } from "./profile.entity";
+import { RoleEntity } from "src/modules/role/entities/role.entity";
 
 @Entity(EntityName.USER)
 export class UserEntity extends BaseTimestampedEntity {
@@ -27,4 +28,6 @@ export class UserEntity extends BaseTimestampedEntity {
 	@OneToOne(() => ProfileEntity, (profile) => profile.user, { nullable: true })
 	@JoinColumn()
 	profile: ProfileEntity;
+	@ManyToOne(() => RoleEntity, (role) => role.users, { eager: true, nullable: true })
+	role: RoleEntity;
 }

@@ -1,6 +1,8 @@
 {
 	"PublicMessages": {
-		"Successfully": "The process ended successfully"
+		"Successfully": "The process ended successfully",
+		"SuccessRemoval": "The item has been removed successfully",
+		"AccessDenied": "Your access to this service was denied"
 	},
 	"MulterMessages": {
 		"InvalidFile": "Invalid file type"
@@ -21,12 +23,21 @@
 		"InvalidPhoneNumFormat": "Invalid phone number format",
 		"InvalidOtpCodeFormat": "Invalid OTP code format",
 		"InvalidRefreshTokenFormat": "Invalid refresh token format",
-		"EmptyPassword": "Password cannot be EmptyPassword"
+		"EmptyPassword": "Password cannot be Empty",
+		"EmptyRoleTitle": "title cannot be empty",
+		"EmptyRoleLabel": "Label cannot be empty",
+		"EmptyRolePermissions": "Permissions must have at least one entry"
 	},
 	"BadRequestMessages": {
-		"UnsupportedSmsProvider": "Unsupported SMS provider"
+		"UnsupportedSmsProvider": "Unsupported SMS provider",
+		"ProtectedRoleRemove": "You cannot remove this role",
+		"ProtectedRoleUpdate": "You cannot modify this role"
+	},
+	"ConflictMessages": {
+		"ConflictRole": "Duplicated Role title or label"
 	},
 	"NotFoundMessages": {
+		"RoleNotFound": "Role not found",
 		"AccountNotFound": "Account not found"
 	}
 }

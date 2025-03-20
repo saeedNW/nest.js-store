@@ -25,11 +25,7 @@ async function bootstrap() {
 	// initialize custom response interceptor
 	app.useGlobalInterceptors(new ResponseTransformerInterceptor());
 	// initialize custom validation pipe
-	app.useGlobalPipes(new UnprocessableEntityPipe({
-		whitelist: true, // Strip unknown properties
-		forbidNonWhitelisted: true, // Reject requests with unknown properties
-		transform: true, // Auto-transform payloads to DTO classes
-	}));
+	app.useGlobalPipes(new UnprocessableEntityPipe());
 	// initialize custom exception filter
 	app.useGlobalFilters(new HttpExceptionFilter());
 	// Starting server
