@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/configs/swagger.config';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { AuthDecorator } from 'src/common/decorator/auth.decorator';
@@ -10,6 +10,7 @@ import { plainToClass } from 'class-transformer';
 import { PaginatedResult, PaginationDto } from 'src/common/utils/typeorm.pagination.utility';
 import { RoleEntity } from './entities/role.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { CreateRoleResponses, FindAllRolesResponses, FindOneRoleResponses, RemoveRoleResponses, UpdateRoleResponses } from './decorators/role-swagger-responses.decorator';
 
 @Controller('role')
 @ApiTags("Role")
@@ -24,6 +25,8 @@ export class RoleController {
 	 */
 	@Post("/create")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@ApiOperation({ summary: "Auth and Role protected API" })
+	@CreateRoleResponses()
 	create(@Body() createRoleDto: CreateRoleDto) {
 		// filter client data and remove unwanted data
 		createRoleDto = plainToClass(CreateRoleDto, createRoleDto, {
@@ -39,6 +42,8 @@ export class RoleController {
 	 * @returns {Promise<PaginatedResult<RoleEntity>>} - Return role list with pagination
 	 */
 	@Get()
+	@ApiOperation({ summary: "Auth and Role protected API" })
+	@FindAllRolesResponses()
 	findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedResult<RoleEntity>> {
 		// filter client data and remove unwanted data
 		paginationDto = plainToClass(PaginationDto, paginationDto, {
@@ -54,6 +59,8 @@ export class RoleController {
 	 * @returns {Promise<RoleEntity>} - Return role entity
 	 */
 	@Get("/:id")
+	@ApiOperation({ summary: "Auth and Role protected API" })
+	@FindOneRoleResponses()
 	findOne(@Param('id', ParseIntPipe) id: number): Promise<RoleEntity> {
 		return this.roleService.findOne(id);
 	}
@@ -65,6 +72,8 @@ export class RoleController {
 	 */
 	@Put("/:id")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@ApiOperation({ summary: "Auth and Role protected API" })
+	@UpdateRoleResponses()
 	update(
 		@Param("id", ParseIntPipe) id: number,
 		@Body() updateRoleDto: UpdateRoleDto
@@ -83,6 +92,8 @@ export class RoleController {
 	 * @returns {Promise<string>} - Success message
 	 */
 	@Delete("/:id")
+	@ApiOperation({ summary: "Auth and Role protected API" })
+	@RemoveRoleResponses()
 	remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
 		return this.roleService.remove(id);
 	}

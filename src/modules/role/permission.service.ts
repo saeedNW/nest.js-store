@@ -14,10 +14,11 @@ export class PermissionService {
 
 	/**
 	 * Retrieve permissions raw data list
-	 * @returns {: Promise<PermissionEntity[]>} - Return permissions list
+	 * @returns {: Promise<{permissions:PermissionEntity[]}>} - Return permissions list
 	 */
-	async getRawData(): Promise<PermissionEntity[]> {
-		return await this.permissionRepository.find()
+	async getRawData(): Promise<{ permissions: PermissionEntity[] }> {
+		const permissions = await this.permissionRepository.find()
+		return { permissions }
 	}
 
 	/**
