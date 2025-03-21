@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/configs/swagger.config';
 import { plainToClass } from 'class-transformer';
@@ -11,6 +11,7 @@ import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LoginDto } from './dto/login.dto';
 import { AccountExistenceResponses, CheckOtpResponses, LoginResponses, RefreshTokenResponses, SendOtpResponses } from './decorators/swagger-responses.decorator';
+import { AuthDecorator } from 'src/common/decorator/auth.decorator';
 
 @Controller("auth")
 @ApiTags("Auth")
@@ -119,5 +120,15 @@ export class AuthController {
 		});
 
 		return this.authService.login(loginDto);
+	}
+
+	/**
+	 * Logout user from system by removing access and refresh tokens from database
+	 */
+	@Get("/logout")
+	@ApiOperation({ summary: "Remove user access and refresh token" })
+	@AuthDecorator()
+	logout() {
+		return this.authService.logout()
 	}
 }

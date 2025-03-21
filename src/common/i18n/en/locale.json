@@ -10,6 +10,7 @@
 	"AuthMessages": {
 		"SentOTP": "OTP code has been sent successfully",
 		"LoginSuccess": "You have logged in successfully",
+		"LogoutSuccess": "You have logged out successfully",
 		"AuthFailed": "Authentication failed. Please try again",
 		"OTPNotExpired": "The OTP code has not expired yet",
 		"ExpiredOTP": "The OTP code has expired",

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, Scope, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -13,19 +13,24 @@ import { TOtpObject } from './types/otp.type';
 import { LoginDto } from './dto/login.dto';
 import { compareSync } from 'bcrypt';
 import { fixDataNumbers } from 'src/common/utils/number.utility';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AuthService {
 	constructor(
 		// inject user repository
 		@InjectRepository(UserEntity)
 		private userRepository: Repository<UserEntity>,
+		// Make the current request accessible in service
+		@Inject(REQUEST)
+		private request: Request,
 		// Register token service
 		private tokenService: TokenService,
 		// Register i18n service
 		private readonly i18n: I18nService,
 		// Register redis service
-		private readonly redis: RedisService
+		private readonly redis: RedisService,
 	) { }
 
 	/**
@@ -33,7 +38,7 @@ export class AuthService {
 	 * @param {SendOtpDto} sendOtpDto - Client data need to check account existence
 	 * @returns Return true if account exists otherwise return false
 	 */
-	async accountExistence(sendOtpDto: SendOtpDto){
+	async accountExistence(sendOtpDto: SendOtpDto) {
 		// extract phone number from client data
 		const { phone } = fixDataNumbers(sendOtpDto);
 
@@ -243,6 +248,27 @@ export class AuthService {
 			accessToken,
 			refreshToken
 		};
+	}
+
+	/**
+	 * Logout user from system by removing access and refresh tokens from database
+	 */
+	async logout() {
+		// Retrieve user's data from request
+		const user = this.request.user;
+
+		// Remove access and refresh token
+		await Promise.all([
+			this.userRepository.createQueryBuilder()
+				.update(UserEntity)
+				.set({ token: () => "NULL" })
+				.where("id = :id", { id: user?.id })
+				.execute(),
+				
+			this.redis.del(`refresh_${user?.phone}`)
+		]);
+
+		return this.i18n.t('locale.AuthMessages.LogoutSuccess', { lang: I18nContext?.current()?.lang })
 	}
 
 	/**
