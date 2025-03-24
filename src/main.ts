@@ -9,6 +9,7 @@ import helmet from 'helmet';
 import { helmetConfig } from './configs/helmet.config';
 import { customHeadersMiddleware } from './common/middlewares/headers.middleware';
 import { getCorsConfig } from './configs/cors.config';
+import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -20,14 +21,16 @@ async function bootstrap() {
 	app.use(helmet(helmetConfig));
 	// Manually set custom headers for X-Powered-By and server
 	app.use(customHeadersMiddleware);
-	// initialize swagger
+	// Initialize swagger
 	swaggerConfiguration(app);
-	// initialize custom response interceptor
+	// Initialize custom response interceptor
 	app.useGlobalInterceptors(new ResponseTransformerInterceptor());
-	// initialize custom validation pipe
+	// Initialize custom validation pipe
 	app.useGlobalPipes(new UnprocessableEntityPipe());
-	// initialize custom exception filter
+	// Initialize custom exception filter
 	app.useGlobalFilters(new HttpExceptionFilter());
+	// Initialize cookie parser
+	app.use(cookieParser(process.env.COOKIE_SECRET));
 	// Starting server
 	await app.listen(process.env.PORT || 3000, () => {
 		console.log(`Server is running on ${process.env.SERVER}`)

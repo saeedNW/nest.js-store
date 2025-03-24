@@ -5,3 +5,7 @@ export type TJwtOtpPayload = {
 export type TJwtRefreshTokenPayload = {
 	phone: string;
 };
+
+export type TJwtPhonePayload = {
+	phone: string;
+};

@@ -1,6 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TJwtOtpPayload, TJwtRefreshTokenPayload } from './types/jwt-payload.type';
+import { TJwtOtpPayload, TJwtPhonePayload, TJwtRefreshTokenPayload } from './types/jwt-payload.type';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RedisService } from 'src/modules/redis/redis.service';
 
@@ -94,6 +94,47 @@ export class TokenService {
 			return payload;
 		} catch (error) {
 			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.AuthFailed', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+	}
+
+	/**
+	 * Create and return JWT phone token
+	 * @param {TJwtPhonePayload} payload - Data that will be used in token
+	 * @returns {string} - JWT token
+	 */
+	createPhoneToken(payload: TJwtPhonePayload): string {
+		/** create phone token */
+		return this.jwtService.sign(payload, {
+			secret: process.env.PHONE_TOKEN_SECRET,
+			expiresIn: 60 * 2, // 2 Mins
+		});
+	}
+
+	/**
+	 * Verify JWT phone Token
+	 * @param {string} token - Client's phone Token
+	 * @throws {UnauthorizedException} Throws exceptions if the token is invalid or missing.
+	 * @returns {TJwtPhonePayload} - Data object saved in JWT Payload
+	 */
+	verifyPhoneToken(token: string): TJwtPhonePayload | never {
+		try {
+			/** Verify phone JWT token */
+			const payload = this.jwtService.verify(token, {
+				secret: process.env.PHONE_TOKEN_SECRET,
+			});
+
+			/** Throw error in case of invalid payload */
+			if (typeof payload !== "object" && !("phone" in payload)) {
+				throw new BadRequestException(this.i18n.t('locale.BadRequestMessages.InvalidPhoneToken', {
+					lang: I18nContext?.current()?.lang
+				}));
+			}
+
+			return payload;
+		} catch (error) {
+			throw new BadRequestException(this.i18n.t('locale.BadRequestMessages.InvalidPhoneToken', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}

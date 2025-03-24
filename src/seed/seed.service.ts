@@ -33,7 +33,7 @@ export class SeedService {
 		);
 
 		const roles = [
-			{ title: 'admin', label: 'Admin', permissions: permissionEntities },
+			{ title: 'admin', label: 'Admin', permissions: permissionEntities.filter(p => p.title === Permissions.Master) },
 			{ title: 'user', label: 'User' },
 		];
 

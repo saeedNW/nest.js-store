@@ -14,7 +14,7 @@ import {
  * @param {ValidationOptions} [validationOptions] - Additional validation options.
  * @returns {Function} - A decorator function.
  */
-export function ConfirmedPassword(
+export function ValidateConfirmedPassword(
 	property: string,
 	message?: string | ((args: ValidationArguments) => string),
 	validationOptions?: ValidationOptions
@@ -34,8 +34,7 @@ export function ConfirmedPassword(
  * Validator constraint to check if the confirmed password matches the original password.
  */
 @ValidatorConstraint({ name: "ConfirmedPassword", async: false })
-export class ConfirmedPasswordConstraint
-	implements ValidatorConstraintInterface {
+export class ConfirmedPasswordConstraint implements ValidatorConstraintInterface {
 	/**
 	 * Validation function to check if the confirmed password matches the original password.
 	 *
@@ -69,30 +68,3 @@ export class ConfirmedPasswordConstraint
 		return customMessage ?? "Password and Confirm Password must match.";
 	}
 }
-
-
-//? Usage Example:
-/**
- @ApiProperty()
-	@IsString()
-	@IsNotEmpty({
-		message(validationArguments) {
-			return String(I18nContext.current()?.t('locale.ValidationMessages.EmptyPassword'))
-		},
-	})
-	@Expose()
-	password: string;
-
-	@ApiProperty()
-	@IsString()
-	@IsNotEmpty({
-		message(validationArguments) {
-			return String(I18nContext.current()?.t('locale.ValidationMessages.EmptyConfirmPassword'))
-		},
-	})
-	@ConfirmedPassword("password", (args) =>
-		String(I18nContext.current()?.t('locale.ValidationMessages.PasswordMismatch'))
-	)
-	@Expose()
-	confirmPassword: string;
- */

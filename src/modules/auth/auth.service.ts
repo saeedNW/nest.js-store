@@ -15,6 +15,7 @@ import { compareSync } from 'bcrypt';
 import { fixDataNumbers } from 'src/common/utils/number.utility';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import { OtpMethods } from 'src/common/enums/otp-methods.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -84,9 +85,10 @@ export class AuthService {
 	/**
 	 * Generates a new OTP and stores it in the database.
 	 * @param {number} userId - The user's ID
+	 * @param {string} [method] - The method that the OTP belongs to
 	 * @returns {Promise<TOtpObject>} - The created or updated OTP
 	 */
-	async saveOtp(userId: number): Promise<TOtpObject> {
+	async saveOtp(userId: number, method: string = OtpMethods.AUTH): Promise<TOtpObject> {
 		// Generate OTP data object
 		const otp: TOtpObject = {
 			// Generate a random 5-digit OTP code
@@ -94,7 +96,9 @@ export class AuthService {
 			// Set expiration time to 2 minutes from now
 			expires_in: new Date(Date.now() + 2 * 60 * 1000),
 			// Set the user's ID
-			userId
+			userId,
+			// Set the method that the OTP belongs to
+			method
 		}
 
 		// Check if an existing OTP is associated with the user
@@ -129,22 +133,8 @@ export class AuthService {
 			}));
 		}
 
-		// Retrieve OTP data
-		const otp = await this.redis.get(`OTP_${user.id}`);
-		if (!otp) {
-			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.ExpiredOTP', {
-				lang: I18nContext?.current()?.lang
-			}));
-		}
-
-		//? NOTE: Since Redis TTL already ensures expiration of the OTP, we don't need to check the expiration here
-
-		// Validate OTP code
-		if (otp.code !== code) {
-			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidOtpCode', {
-				lang: I18nContext?.current()?.lang
-			}));
-		}
+		// Verify client's OTP code
+		this.verifyOtp(user.id, code)
 
 		// Generate access and refresh tokens concurrently
 		const [accessToken, refreshToken] = await Promise.all([
@@ -264,11 +254,44 @@ export class AuthService {
 				.set({ token: () => "NULL" })
 				.where("id = :id", { id: user?.id })
 				.execute(),
-				
+
 			this.redis.del(`refresh_${user?.phone}`)
 		]);
 
 		return this.i18n.t('locale.AuthMessages.LogoutSuccess', { lang: I18nContext?.current()?.lang })
+	}
+
+	/**
+	 * Verify client's OTP code
+	 * @param userId - Client's ID
+	 * @param code - Client's OTP code
+	 */
+	async verifyOtp(userId: number, code: string) {
+		// Retrieve OTP data
+		const otp = await this.redis.get(`OTP_${userId}`);
+		if (!otp) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.ExpiredOTP', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		//? NOTE: Since Redis TTL already ensures expiration of the OTP, we don't need to check the expiration here
+
+		// Validate OTP method
+		if (otp.method !== OtpMethods.AUTH) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidOtpCode', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		// Validate OTP code
+		if (otp.code !== code) {
+			throw new UnauthorizedException(this.i18n.t('locale.AuthMessages.InvalidOtpCode', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		return otp;
 	}
 
 	/**

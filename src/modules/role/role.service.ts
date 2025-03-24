@@ -138,7 +138,7 @@ export class RoleService {
 			}));
 		}
 
-		/** remove category */
+		// remove role
 		await this.roleRepository.delete({ id });
 
 		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {

@@ -92,6 +92,22 @@ function multerFilename(
 }
 
 /**
+ * Converts an absolute URL to a relative file path by removing the base URL.
+ * @param {string} fileUrl - The complete URL to be converted to a relative path.
+ * @returns {string} The original relative file path.
+ */
+function convertToRelativePath(fileUrl: string): string {
+	// define server url based on application runtime environment
+	const serverURL: string = process.env.SERVER;
+
+	// Remove the base URL from the complete URL.
+	const relativePath: string = fileUrl.replace(serverURL + "/", "");
+
+	// Add back the leading './' to create the original relative file path.
+	return relativePath[0] === "/" ? relativePath : `/${relativePath}`;
+}
+
+/**
  * Removes uploaded files from the file system. Handles both single and multiple file scenarios.
  * @param {TMulterFile} files - The file or files metadata provided by multer.
  * @param {boolean} multiFile - A flag indicating whether the input contains multiple files (default: `false`).
@@ -117,6 +133,20 @@ export function removeUploadedFiles(
 	}
 
 	return true;
+}
+
+/**
+ * File remover
+ * @param {string} filePath - File location path
+ */
+export function fileRemoval(filePath: string) {
+	// Convert file path to relative absolute path
+	filePath = resolve("./public" + convertToRelativePath(filePath));
+
+	// Remove a single file if it exists
+	if (existsSync(filePath)) {
+		unlinkSync(filePath);
+	}
 }
 
 /**

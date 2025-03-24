@@ -7,10 +7,6 @@ import { RoleEntity } from "src/modules/role/entities/role.entity";
 
 @Entity(EntityName.USER)
 export class UserEntity extends BaseTimestampedEntity {
-	@Column({ nullable: true })
-	first_name: string;
-	@Column({ nullable: true })
-	last_name: string;
 	@Column({ unique: true })
 	phone: string;
 	@Column({ nullable: true })

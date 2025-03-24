@@ -1,11 +1,13 @@
 {
 	"PublicMessages": {
 		"Successfully": "The process ended successfully",
+		"SuccessUpdate": "Data has been updated successfully",
 		"SuccessRemoval": "The item has been removed successfully",
 		"AccessDenied": "Your access to this service was denied"
 	},
 	"MulterMessages": {
-		"InvalidFile": "Invalid file type"
+		"InvalidFile": "Invalid file type",
+		"LargeFile": "The file is to large"
 	},
 	"AuthMessages": {
 		"SentOTP": "OTP code has been sent successfully",
@@ -24,7 +26,12 @@
 		"InvalidPhoneNumFormat": "Invalid phone number format",
 		"InvalidOtpCodeFormat": "Invalid OTP code format",
 		"InvalidRefreshTokenFormat": "Invalid refresh token format",
-		"EmptyPassword": "Password cannot be Empty",
+		"InvalidPostalCodeFormat": "Invalid postal code format",
+		"InvalidLongitude": "Longitude must be between -180 and 180",
+		"InvalidLatitude": "Latitude must be between -90 and 90",
+		"EmptyNewPassword": "New password cannot be Empty",
+		"EmptyConfirmPassword": "Confirm password cannot be Empty",
+		"PasswordMismatch": "Confirm password and new password are not match",
 		"EmptyRoleTitle": "title cannot be empty",
 		"EmptyRoleLabel": "Label cannot be empty",
 		"EmptyRolePermissions": "Permissions must have at least one entry"
@@ -32,13 +39,18 @@
 	"BadRequestMessages": {
 		"UnsupportedSmsProvider": "Unsupported SMS provider",
 		"ProtectedRoleRemove": "You cannot remove this role",
-		"ProtectedRoleUpdate": "You cannot modify this role"
+		"ProtectedRoleUpdate": "You cannot modify this role",
+		"EmptyPassword": "Password cannot be Empty",
+		"InvalidPassword": "The entered password is invalid",
+		"InvalidPhoneToken": "Invalid phone update token"
 	},
 	"ConflictMessages": {
-		"ConflictRole": "Duplicated Role title or label"
+		"ConflictRole": "Duplicated Role title or label",
+		"ConflictPhone": "Duplicated phone number"
 	},
 	"NotFoundMessages": {
 		"RoleNotFound": "Role not found",
+		"AddressNotFound": "Address not found",
 		"AccountNotFound": "Account not found"
 	}
 }
