@@ -10,7 +10,7 @@ setTimeout(() => {
 
 			svgIcon.style.paddingLeft = "10px";
 
-			let button = el.querySelector(".opblock-control-arrow");
+			let button = el.querySelector(".authorization__btn");
 
 			if (button) {
 				button.parentNode.insertBefore(svgIcon, button);
