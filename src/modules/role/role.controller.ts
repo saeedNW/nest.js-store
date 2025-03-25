@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/configs/swagger.config';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { AuthDecorator } from 'src/common/decorator/auth.decorator';
@@ -25,7 +25,7 @@ export class RoleController {
 	 */
 	@Post("/create")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@CreateRoleResponses()
 	create(@Body() createRoleDto: CreateRoleDto) {
 		// filter client data and remove unwanted data
@@ -42,7 +42,7 @@ export class RoleController {
 	 * @returns {Promise<PaginatedResult<RoleEntity>>} - Return role list with pagination
 	 */
 	@Get()
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@FindAllRolesResponses()
 	findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedResult<RoleEntity>> {
 		// filter client data and remove unwanted data
@@ -59,7 +59,7 @@ export class RoleController {
 	 * @returns {Promise<RoleEntity>} - Return role entity
 	 */
 	@Get("/:id")
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@FindOneRoleResponses()
 	findOne(@Param('id', ParseIntPipe) id: number): Promise<RoleEntity> {
 		return this.roleService.findOne(id);
@@ -72,7 +72,7 @@ export class RoleController {
 	 */
 	@Put("/:id")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@UpdateRoleResponses()
 	update(
 		@Param("id", ParseIntPipe) id: number,
@@ -92,7 +92,7 @@ export class RoleController {
 	 * @returns {Promise<string>} - Success message
 	 */
 	@Delete("/:id")
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@RemoveRoleResponses()
 	remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
 		return this.roleService.remove(id);

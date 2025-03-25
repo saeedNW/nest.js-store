@@ -15,11 +15,11 @@ export enum SwaggerConsumes {
 }
 
 /**
- * initialize swagger document
+ * Initialize Swagger document
  * @param app NestJS Application instance
  */
 export function swaggerConfiguration(app: INestApplication) {
-	// define the swagger options and configs
+	// Define Swagger options
 	const document = new DocumentBuilder()
 		.setTitle('NestJS Application')
 		.setDescription('API documentation of the NestJS application')
@@ -27,11 +27,14 @@ export function swaggerConfiguration(app: INestApplication) {
 		.addBearerAuth(swaggerBearerAuthConfig(), 'Authorization')
 		.build();
 
-	// Initialize swagger document based on defined options
+	// Initialize Swagger document
 	const swaggerDocument = SwaggerModule.createDocument(app, document);
 
-	// setup swagger ui page
-	SwaggerModule.setup('/api-doc', app, swaggerDocument);
+	// Setup Swagger UI with custom options
+	SwaggerModule.setup('/api-doc', app, swaggerDocument, {
+		// customCssUrl: '/swagger-ui/custom.css', // Optional for CSS changes
+		customJs: '/swagger-ui/custom.js' // Custom JavaScript
+	});
 }
 
 /**

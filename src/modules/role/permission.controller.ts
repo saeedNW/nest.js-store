@@ -21,7 +21,7 @@ export class PermissionController {
 	 * @returns {Promise<PermissionEntity[]>} - Return permissions list
 	 */
 	@Get("/raw")
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@FindRawPermissionsResponses()
 	getRawData(): Promise<{ permissions: PermissionEntity[] }> {
 		return this.permissionService.getRawData()
@@ -33,7 +33,7 @@ export class PermissionController {
 	 * @returns {Promise<PaginatedResult<PermissionEntity>>} - Return permission list with pagination
 	 */
 	@Get("/paginate")
-	@ApiOperation({ summary: "Auth and Role protected API" })
+	@ApiOperation({ summary: "[ RBAC ]" })
 	@FindPaginatedPermissionsResponses()
 	getPaginatedData(@Query() paginationDto: PaginationDto): Promise<PaginatedResult<PermissionEntity>> {
 		// filter client data and remove unwanted data
