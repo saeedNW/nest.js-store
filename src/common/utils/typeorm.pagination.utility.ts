@@ -101,9 +101,9 @@ export async function paginate<T extends ObjectLiteral>(
 		meta: {
 			totalItems,
 			itemCount: items.length,
-			itemsPerPage: paginationDto.limit,
+			itemsPerPage: Number(paginationDto.limit),
 			totalPages: Math.ceil(totalItems / paginationDto.limit),
-			currentPage: paginationDto.page,
+			currentPage: Number(paginationDto.page),
 		},
 		links: getPaginationLinks(paginationDto, totalItems, link),
 	};

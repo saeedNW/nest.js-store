@@ -27,6 +27,7 @@
 		"InvalidOtpCodeFormat": "Invalid OTP code format",
 		"InvalidRefreshTokenFormat": "Invalid refresh token format",
 		"InvalidPostalCodeFormat": "Invalid postal code format",
+		"InvalidPasswordFormat": "Invalid password format",
 		"InvalidLongitude": "Longitude must be between -180 and 180",
 		"InvalidLatitude": "Latitude must be between -90 and 90",
 		"EmptyNewPassword": "New password cannot be Empty",
@@ -34,7 +35,8 @@
 		"PasswordMismatch": "Confirm password and new password are not match",
 		"EmptyRoleTitle": "title cannot be empty",
 		"EmptyRoleLabel": "Label cannot be empty",
-		"EmptyRolePermissions": "Permissions must have at least one entry"
+		"EmptyRolePermissions": "Permissions must have at least one entry",
+		"EmptyRoleField": "The role field cannot be empty"
 	},
 	"BadRequestMessages": {
 		"UnsupportedSmsProvider": "Unsupported SMS provider",

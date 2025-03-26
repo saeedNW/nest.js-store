@@ -24,7 +24,8 @@ export class ProfileEntity extends BaseEntity {
 
 	@AfterLoad()
 	map() {
-		this.profile_image = this.profile_image ?
-			process.env.SERVER + this.profile_image : "null";
+		if (this.profile_image) {
+			this.profile_image = process.env.SERVER + this.profile_image;
+		}
 	}
 }

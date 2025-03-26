@@ -1,19 +1,24 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException, Scope } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../entities/user.entity";
-import { Repository } from "typeorm";
+import { Brackets, Repository, SelectQueryBuilder } from "typeorm";
 import { REQUEST } from "@nestjs/core";
 import { I18nContext, I18nService } from "nestjs-i18n";
 import { AuthService } from "src/modules/auth/auth.service";
 import { TokenService } from "src/modules/auth/token.service";
 import { RedisService } from "src/modules/redis/redis.service";
 import { Request, Response } from "express";
-import { UpdatePasswordDto } from "../dto/update-password.dto";
+import { UpdatePasswordDto, UpdateUserPasswordDto } from "../dto/update-password.dto";
 import { compareSync, genSaltSync, hashSync } from "bcrypt";
 import { UpdatePhoneDto } from "../dto/update-phone.dto";
 import { fixDataNumbers } from "src/common/utils/number.utility";
 import { TOtpObject } from "src/modules/auth/types/otp.type";
 import { OtpMethods } from "src/common/enums/otp-methods.enum";
+import { paginate, PaginatedResult, PaginationDto } from "src/common/utils/typeorm.pagination.utility";
+import { FindUsersDto } from "../dto/find-user.dto";
+import { deleteInvalidPropertyInObject } from "src/common/utils/functions.utils";
+import { escapeAndTrim } from "src/common/utils/sanitizer.utility";
+import { RoleService } from "src/modules/role/role.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -30,7 +35,9 @@ export class UserService {
 		// Register token service
 		private tokenService: TokenService,
 		// Register redis service
-		private redis: RedisService
+		private redis: RedisService,
+		// Register role service
+		private roleService: RoleService
 	) { }
 
 	/**
@@ -126,6 +133,127 @@ export class UserService {
 		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
 			lang: I18nContext?.current()?.lang
 		})
+	}
+
+	/**
+	 * Retrieves a paginated list of users based on search criteria
+	 * @param {PaginationDto} paginationDto - Pagination details
+	 * @param {FindUsersDto} findUserDto - Search filters for users
+	 * @returns {Promise<PaginatedResult<UserEntity>>} - A paginated list of users
+	 */
+	async findAll(paginationDto: PaginationDto, findUserDto: FindUsersDto): Promise<PaginatedResult<UserEntity>> {
+		// Sanitize client data
+		deleteInvalidPropertyInObject(findUserDto);
+		escapeAndTrim(findUserDto);
+
+		// Create the base query builder
+		const queryBuilder = this.buildUserQuery(findUserDto);
+
+		// Paginate the results
+		return paginate(
+			paginationDto,
+			this.userRepository,
+			queryBuilder,
+			`${process.env.SERVER}/user/list`
+		);
+	}
+
+	/**
+	 * Retrieve user's data by ID
+	 * @param {number} id - User's ID
+	 * @returns {Promise<UserEntity>} - Return user's data
+	 */
+	async findOne(id: number): Promise<UserEntity> {
+		// Retrieve user data
+		const user = await this.userRepository.findOne({ where: { id }, relations: ["profile"] });
+
+		// Throw error if account not found
+		if (!user) {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		return user;
+	}
+
+	/**
+	 * Updates the user's password
+	 * @param {number} id - User's ID
+	 * @param {UpdateUserPasswordDto} updatePasswordDto - An object containing the new password
+	 * @param {string} updatePasswordDto.newPassword - The new password to set for the user
+	 */
+	async updateUserPassword(id: number, { newPassword }: UpdateUserPasswordDto) {
+		// validate user existence
+		await this.findOne(id);
+
+		// Update user password
+		await this.userRepository.update(id, { password: this.hashPassword(newPassword) });
+
+		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
+			lang: I18nContext?.current()?.lang
+		})
+	}
+
+	/**
+	 * Update user's phone number
+	 * @param {number} id - User's ID
+	 * @param {UpdatePhoneDto} updatePhoneDto - Client data for new phone
+	 */
+	async updateUserPhone(id: number, updatePhoneDto: UpdatePhoneDto) {
+		// Validate user's existence
+		let user = await this.findOne(id);
+		// extract phone number from client data
+		const { phone } = fixDataNumbers(updatePhoneDto);
+
+		// Validate phone number uniqueness
+		await this.ensurePhoneIsUnique(user.id, phone);
+		// set user new phone value
+		await this.userRepository.update(user.id, { phone });
+
+		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
+			lang: I18nContext?.current()?.lang
+		})
+	}
+
+	async assignRole(id: number, roleTitle: string) {
+		// Retrieve user data
+		const user = await this.findOne(id)
+
+		// Retrieve role data
+		const role = await this.roleService.findOneByTitle(roleTitle);
+
+		// Assign role to user
+		user.role = role;
+		await this.userRepository.save(user);
+
+		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
+			lang: I18nContext?.current()?.lang
+		})
+	}
+
+	/**
+	 * Builds the query for retrieving users based on filters
+	 * @param {FindUsersDto} filters - The filters for searching users
+	 * @returns {SelectQueryBuilder<UserEntity>} - The built query
+	 */
+	private buildUserQuery(filters: FindUsersDto): SelectQueryBuilder<UserEntity> {
+		const queryBuilder = this.userRepository
+			.createQueryBuilder("user")
+			.leftJoinAndSelect("user.profile", "profile");
+
+		// Apply search filter if provided
+		if (filters.search) {
+			queryBuilder.andWhere(
+				new Brackets((qb) => {
+					qb.where("user.phone ILIKE :search", { search: `%${filters.search}%` })
+						.orWhere("profile.first_name ILIKE :search", { search: `%${filters.search}%` })
+						.orWhere("profile.last_name ILIKE :search", { search: `%${filters.search}%` });
+				})
+			);
+		}
+
+		return queryBuilder;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { ApiConsumes, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/configs/swagger.config';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { AuthDecorator } from 'src/common/decorator/auth.decorator';
@@ -10,7 +10,13 @@ import { plainToClass } from 'class-transformer';
 import { PaginatedResult, PaginationDto } from 'src/common/utils/typeorm.pagination.utility';
 import { RoleEntity } from './entities/role.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { CreateRoleResponses, FindAllRolesResponses, FindOneRoleResponses, RemoveRoleResponses, UpdateRoleResponses } from './decorators/role-swagger-responses.decorator';
+import {
+	CreateRoleResponses,
+	FindAllRolesResponses,
+	FindOneRoleResponses,
+	RemoveRoleResponses,
+	UpdateRoleResponses
+} from './decorators/role-swagger-responses.decorator';
 
 @Controller('role')
 @ApiTags("Role")

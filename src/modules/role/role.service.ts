@@ -147,12 +147,29 @@ export class RoleService {
 	}
 
 	/**
+	 * Retrieve role by title
+	 * @param {string} title - Role title
+	 * @returns {Promise<RoleEntity>} - Return role entity
+	 */
+	async findOneByTitle(title: string): Promise<RoleEntity> {
+		const role: RoleEntity | null = await this.roleRepository.findOne({ where: { title }});
+
+		if (!role) {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.RoleNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		return role
+	}
+
+	/**
 	 * Check if the Role title or label are duplicated
 	 * @param {string} query - Role title or label
 	 * @param {number} [id] - (Optional) Role ID to exclude from the check
 	 * @returns {Promise<boolean>} - Returns true if role is not duplicated
 	 */
-	async checkDuplicatedRole(query: string, id?: number): Promise<boolean> {
+	private async checkDuplicatedRole(query: string, id?: number): Promise<boolean> {
 		const whereConditions: any[] = [
 			{ title: query },
 			{ label: query },
