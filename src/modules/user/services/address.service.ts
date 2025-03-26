@@ -258,9 +258,7 @@ export class AddressService {
 			});
 		}
 
-		// Save address data into database
-		address = await this.addressRepository.save(address);
-
-		return address
+		// Save address data into database and return
+		return await this.addressRepository.save(address);
 	}
 }

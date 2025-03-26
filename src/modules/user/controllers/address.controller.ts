@@ -8,6 +8,18 @@ import { plainToClass } from "class-transformer";
 import { UpdateAddressDto } from "../dto/update-address.dto";
 import { PermissionDecorator } from "src/common/decorator/permission.decorator";
 import { Permissions } from "src/common/enums/permissions.enum";
+import {
+	CreateAddressResponses,
+	findAllAddressesResponses,
+	CreateUserAddressResponses,
+	RemoveAddressResponses,
+	RemoveUserAddressResponses,
+	UpdateAddressResponses,
+	UpdateUserAddressResponses,
+	findOneAddressResponses,
+	findUserAddressesResponses,
+	findUserSingleAddressResponses
+} from "../decorators/address-swagger-response.decorator";
 
 @Controller('address')
 @ApiTags("Address")
@@ -23,6 +35,7 @@ export class AddressController {
 	 */
 	@Post()
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@CreateAddressResponses()
 	create(@Body() createAddressDto: CreateAddressDto) {
 		// filter client data and remove unwanted data
 		createAddressDto = plainToClass(CreateAddressDto, createAddressDto, {
@@ -36,6 +49,7 @@ export class AddressController {
 	 * Find user's addresses list
 	 */
 	@Get()
+	@findAllAddressesResponses()
 	findAll() {
 		return this.addressService.findAll()
 	}
@@ -45,6 +59,7 @@ export class AddressController {
 	 * @param id - Address's ID
 	 */
 	@Get("/:id")
+	@findOneAddressResponses()
 	findOne(@Param('id', ParseIntPipe) id: number) {
 		return this.addressService.findOne(id)
 	}
@@ -56,6 +71,7 @@ export class AddressController {
 	 */
 	@Put("/:id")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@UpdateAddressResponses()
 	update(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() updateAddressDto: UpdateAddressDto
@@ -73,6 +89,7 @@ export class AddressController {
 	 * @param {number} id - Address ID
 	 */
 	@Delete("/:id")
+	@RemoveAddressResponses()
 	remove(@Param('id', ParseIntPipe) id: number) {
 		return this.addressService.remove(id)
 	}
@@ -88,6 +105,7 @@ export class AddressController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Create new address for user" })
+	@CreateUserAddressResponses()
 	createForUser(
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() createAddressDto: CreateAddressDto
@@ -106,6 +124,7 @@ export class AddressController {
 	@Get("/list/:userId")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve user address list" })
+	@findUserAddressesResponses()
 	findUserAddresses(@Param('userId', ParseIntPipe) userId: number) {
 		return this.addressService.findUserAddresses(userId);
 	}
@@ -117,6 +136,7 @@ export class AddressController {
 	@Get("/single/:addressId")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve single address" })
+	@findUserSingleAddressResponses()
 	retrieveAddress(@Param('addressId', ParseIntPipe) addressId: number) {
 		return this.addressService.retrieveAddress(addressId);
 	}
@@ -130,6 +150,7 @@ export class AddressController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Update address info" })
+	@UpdateUserAddressResponses()
 	updateForUser(
 		@Param('addressId', ParseIntPipe) addressId: number,
 		@Body() updateAddressDto: UpdateAddressDto
@@ -148,6 +169,7 @@ export class AddressController {
 	@Delete("/remove/:addressId")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Remove address" })
+	@RemoveUserAddressResponses()
 	removeForUser(@Param('addressId', ParseIntPipe) addressId: number) {
 		return this.addressService.removeUserAddress(addressId);
 	}
