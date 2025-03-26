@@ -48,7 +48,7 @@ export class UpdatePhoneSuccess extends OkApiBaseResponse {
 
 export class FindAllUsersSuccess extends OkApiBaseResponse {
 	@ApiProperty({
-		description: "Response data (Development Environment Only)",
+		description: "Response data",
 		example: {
 			items: [
 				{
@@ -101,7 +101,7 @@ export class FindAllUsersSuccess extends OkApiBaseResponse {
 
 export class FindOneUserSuccess extends OkApiBaseResponse {
 	@ApiProperty({
-		description: "Response data (Development Environment Only)",
+		description: "Response data",
 		example: {
 			id: 1,
 			created_at: "2025-03-24T09:02:12.954Z",

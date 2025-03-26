@@ -1,6 +1,4 @@
 import {
-	ApiBadRequestResponse,
-	ApiConflictResponse,
 	ApiForbiddenResponse,
 	ApiInternalServerErrorResponse,
 	ApiNotFoundResponse,
@@ -8,26 +6,14 @@ import {
 	ApiUnauthorizedResponse,
 	ApiUnprocessableEntityResponse
 } from "@nestjs/swagger";
-import {
-	AssignRoleSuccess,
-	FindAllUsersSuccess,
-	FindOneUserSuccess,
-	RetrieveUserSuccess,
-	UpdatePasswordSuccess,
-	UpdatePhoneSuccess,
-	UpdateUserPasswordSuccess,
-	UpdateUserPhoneSuccess,
-	VerifyPhoneSuccess
-} from "../responses/user.success.resopnse";
+import { RemoveProfileImageSuccess, RemoveUserProfileImageSuccess, UpdateProfileImageSuccess, UpdateProfileSuccess, UpdateUserProfileImageSuccess, UpdateUserProfileSuccess } from "../responses/profile.success.response";
 import { UnauthorizedResponse } from "src/common/responses/unauthorized.response";
 import { InternalServerErrorResponse } from "src/common/responses/internal-server-error.response";
-import { UnprocessableEntityResponse } from "src/common/responses/unprocessable.response";
 import { NotFoundResponse } from "src/common/responses/not-found.response";
-import { BadRequestResponse } from "src/common/responses/bad-request.response";
-import { ConflictResponse } from "src/common/responses/conflict.response";
+import { UnprocessableEntityResponse } from "src/common/responses/unprocessable.response";
 import { AccessDeniedResponse } from "src/common/responses/access-denied.response";
 
-export function RetrieveUserResponses() {
+export function UpdateProfileResponses() {
 	return function (
 		target: any,
 		propertyKey: string,
@@ -35,35 +21,7 @@ export function RetrieveUserResponses() {
 	) {
 		ApiOkResponse({
 			description: "Success Response",
-			type: RetrieveUserSuccess,
-		})(target, propertyKey, descriptor);
-
-		ApiUnauthorizedResponse({
-			description: "Unauthorized Response",
-			type: UnauthorizedResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiInternalServerErrorResponse({
-			description: "Internal Server Error",
-			type: InternalServerErrorResponse,
-		})(target, propertyKey, descriptor);
-	};
-}
-
-export function UpdatePasswordResponses() {
-	return function (
-		target: any,
-		propertyKey: string,
-		descriptor: PropertyDescriptor
-	) {
-		ApiOkResponse({
-			description: "Success Response",
-			type: UpdatePasswordSuccess,
-		})(target, propertyKey, descriptor);
-
-		ApiBadRequestResponse({
-			description: "Bad Request Response",
-			type: BadRequestResponse,
+			type: UpdateProfileSuccess,
 		})(target, propertyKey, descriptor);
 
 		ApiUnauthorizedResponse({
@@ -88,7 +46,7 @@ export function UpdatePasswordResponses() {
 	};
 }
 
-export function UpdatePhoneResponses() {
+export function UpdateProfileImageResponses() {
 	return function (
 		target: any,
 		propertyKey: string,
@@ -96,55 +54,7 @@ export function UpdatePhoneResponses() {
 	) {
 		ApiOkResponse({
 			description: "Success Response",
-			type: UpdatePhoneSuccess,
-		})(target, propertyKey, descriptor);
-
-		ApiBadRequestResponse({
-			description: "Bad Request Response",
-			type: BadRequestResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiUnauthorizedResponse({
-			description: "Unauthorized Response",
-			type: UnauthorizedResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiNotFoundResponse({
-			description: "Not fund Response",
-			type: NotFoundResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiConflictResponse({
-			description: "Conflict Response",
-			type: ConflictResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiUnprocessableEntityResponse({
-			description: "Unprocessable Entity Response",
-			type: UnprocessableEntityResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiInternalServerErrorResponse({
-			description: "Internal Server Error",
-			type: InternalServerErrorResponse,
-		})(target, propertyKey, descriptor);
-	};
-}
-
-export function VerifyPhoneResponses() {
-	return function (
-		target: any,
-		propertyKey: string,
-		descriptor: PropertyDescriptor
-	) {
-		ApiOkResponse({
-			description: "Success Response",
-			type: VerifyPhoneSuccess,
-		})(target, propertyKey, descriptor);
-
-		ApiBadRequestResponse({
-			description: "Bad Request Response",
-			type: BadRequestResponse,
+			type: UpdateProfileImageSuccess,
 		})(target, propertyKey, descriptor);
 
 		ApiUnauthorizedResponse({
@@ -169,7 +79,7 @@ export function VerifyPhoneResponses() {
 	};
 }
 
-export function findAllUsersResponses() {
+export function RemoveProfileImageResponses() {
 	return function (
 		target: any,
 		propertyKey: string,
@@ -177,50 +87,12 @@ export function findAllUsersResponses() {
 	) {
 		ApiOkResponse({
 			description: "Success Response",
-			type: FindAllUsersSuccess,
+			type: RemoveProfileImageSuccess,
 		})(target, propertyKey, descriptor);
 
 		ApiUnauthorizedResponse({
 			description: "Unauthorized Response",
 			type: UnauthorizedResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiForbiddenResponse({
-			description: "Forbidden Response",
-			type: AccessDeniedResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiUnprocessableEntityResponse({
-			description: "Unprocessable Entity Response",
-			type: UnprocessableEntityResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiInternalServerErrorResponse({
-			description: "Internal Server Error",
-			type: InternalServerErrorResponse,
-		})(target, propertyKey, descriptor);
-	};
-}
-
-export function FindOneUserResponses() {
-	return function (
-		target: any,
-		propertyKey: string,
-		descriptor: PropertyDescriptor
-	) {
-		ApiOkResponse({
-			description: "Success Response",
-			type: FindOneUserSuccess,
-		})(target, propertyKey, descriptor);
-
-		ApiUnauthorizedResponse({
-			description: "Unauthorized Response",
-			type: UnauthorizedResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiForbiddenResponse({
-			description: "Forbidden Response",
-			type: AccessDeniedResponse,
 		})(target, propertyKey, descriptor);
 
 		ApiNotFoundResponse({
@@ -235,7 +107,7 @@ export function FindOneUserResponses() {
 	};
 }
 
-export function UpdateUserPasswordResponses() {
+export function UpdateUserProfileResponses() {
 	return function (
 		target: any,
 		propertyKey: string,
@@ -243,7 +115,7 @@ export function UpdateUserPasswordResponses() {
 	) {
 		ApiOkResponse({
 			description: "Success Response",
-			type: UpdateUserPasswordSuccess,
+			type: UpdateUserProfileSuccess,
 		})(target, propertyKey, descriptor);
 
 		ApiUnauthorizedResponse({
@@ -273,7 +145,7 @@ export function UpdateUserPasswordResponses() {
 	};
 }
 
-export function UpdateUserPhoneResponses() {
+export function UpdateUserProfileImageResponses() {
 	return function (
 		target: any,
 		propertyKey: string,
@@ -281,7 +153,7 @@ export function UpdateUserPhoneResponses() {
 	) {
 		ApiOkResponse({
 			description: "Success Response",
-			type: UpdateUserPhoneSuccess,
+			type: UpdateUserProfileImageSuccess,
 		})(target, propertyKey, descriptor);
 
 		ApiUnauthorizedResponse({
@@ -297,11 +169,6 @@ export function UpdateUserPhoneResponses() {
 		ApiNotFoundResponse({
 			description: "Not fund Response",
 			type: NotFoundResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiConflictResponse({
-			description: "Conflict Response",
-			type: ConflictResponse,
 		})(target, propertyKey, descriptor);
 
 		ApiUnprocessableEntityResponse({
@@ -316,7 +183,7 @@ export function UpdateUserPhoneResponses() {
 	};
 }
 
-export function AssignRoleResponses() {
+export function RemoveUserProfileImageResponses() {
 	return function (
 		target: any,
 		propertyKey: string,
@@ -324,7 +191,7 @@ export function AssignRoleResponses() {
 	) {
 		ApiOkResponse({
 			description: "Success Response",
-			type: AssignRoleSuccess,
+			type: RemoveUserProfileImageSuccess,
 		})(target, propertyKey, descriptor);
 
 		ApiUnauthorizedResponse({
@@ -340,11 +207,6 @@ export function AssignRoleResponses() {
 		ApiNotFoundResponse({
 			description: "Not fund Response",
 			type: NotFoundResponse,
-		})(target, propertyKey, descriptor);
-
-		ApiUnprocessableEntityResponse({
-			description: "Unprocessable Entity Response",
-			type: UnprocessableEntityResponse,
 		})(target, propertyKey, descriptor);
 
 		ApiInternalServerErrorResponse({
