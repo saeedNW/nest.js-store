@@ -150,12 +150,19 @@ export class UserService {
 		const queryBuilder = this.buildUserQuery(findUserDto);
 
 		// Paginate the results
-		return paginate(
+		const users = await paginate(
 			paginationDto,
 			this.userRepository,
 			queryBuilder,
 			`${process.env.SERVER}/user/list`
 		);
+
+		users.items.map(item => {
+			delete item.password;
+			delete item.token;
+		})
+
+		return users
 	}
 
 	/**
