@@ -16,6 +16,7 @@ import { fixDataNumbers } from 'src/common/utils/number.utility';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { OtpMethods } from 'src/common/enums/otp-methods.enum';
+import { RoleService } from '../role/role.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AuthService {
@@ -32,6 +33,9 @@ export class AuthService {
 		private readonly i18n: I18nService,
 		// Register redis service
 		private readonly redis: RedisService,
+		// Register role service
+		private readonly roleService: RoleService,
+
 	) { }
 
 	/**
@@ -62,8 +66,11 @@ export class AuthService {
 		let user: UserEntity | null = await this.getUser(phone);
 
 		if (!user) {
+			// Retrieve user role
+			const role = await this.roleService.findOneByTitle('user');
+
 			// create new user and save it in database if user not found
-			user = this.userRepository.create({ phone });
+			user = this.userRepository.create({ phone, role });
 			user = await this.userRepository.save(user);
 		}
 

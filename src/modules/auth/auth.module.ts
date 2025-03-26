@@ -6,11 +6,13 @@ import { SmsModule } from '../sms/sms.module';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { JwtService } from '@nestjs/jwt';
+import { RoleModule } from '../role/role.module';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([UserEntity]),
-		SmsModule
+		SmsModule,
+		RoleModule
 	],
 	controllers: [AuthController],
 	providers: [AuthService, TokenService, JwtService],
