@@ -27,6 +27,8 @@ export class UserController {
 		private readonly i18n: I18nService
 	) { }
 
+	// ===================== User APIs =====================
+
 	/**
 	 * Retrieve the authenticated user's data.
 	 */
@@ -94,6 +96,8 @@ export class UserController {
 	verifyPhone(@Body() verifyPhoneDto: VerifyPhoneDto) {
 		return this.userService.verifyPhone(verifyPhoneDto.code);
 	}
+
+	// ===================== Admin APIs =====================
 
 	/**
 	 * Retrieves a paginated list of users based on search criteria

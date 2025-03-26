@@ -10,6 +10,7 @@ import { deleteInvalidPropertyInObject } from "src/common/utils/functions.utils"
 import { escapeAndTrim } from "src/common/utils/sanitizer.utility";
 import { Request } from "express";
 import { fileRemoval, TMulterFile, uploadFinalization } from "src/common/utils/multer.utility";
+import { UserService } from "./user.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProfileService {
@@ -24,6 +25,8 @@ export class ProfileService {
 		@Inject(REQUEST) private request: Request,
 		// Register i18n service
 		private readonly i18n: I18nService,
+		// Register user service
+		private userService: UserService
 	) { }
 
 	/**
@@ -32,7 +35,7 @@ export class ProfileService {
 	 */
 	async updateProfile(updateProfileDto: UpdateProfileDto) {
 		// Sanitize client data
-		deleteInvalidPropertyInObject(updateProfileDto);
+		deleteInvalidPropertyInObject(updateProfileDto, [], ["bio"]);
 		escapeAndTrim(updateProfileDto);
 
 		// Retrieve user data from request
@@ -62,13 +65,16 @@ export class ProfileService {
 	 */
 	async updateProfileImage(image: TMulterFile) {
 		// Retrieve user data from request
-		let { id: userId } = this.getRequestUser();
+		let { id: userId, profile: { profile_image } } = this.getRequestUser();
 
 		// finalize image upload process
 		const imagePath = await uploadFinalization(image, `/user/profile/${userId}`);
 
 		// Update user's profile image
 		await this.profileRepository.update({ userId }, { profile_image: imagePath });
+
+		// Remove old image file
+		fileRemoval(profile_image);
 
 		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
 			lang: I18nContext?.current()?.lang
@@ -91,6 +97,98 @@ export class ProfileService {
 		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {
 			lang: I18nContext?.current()?.lang
 		});
+	}
+
+	/**
+	 * Updates or creates a user's profile
+	 * @param {number} userId - User's ID
+	 * @param {UpdateProfileDto} updateProfileDto - The updated profile data
+	 */
+	async updateUserProfile(userId: number, updateProfileDto: UpdateProfileDto) {
+		// Sanitize client data
+		deleteInvalidPropertyInObject(updateProfileDto, [], ["bio"]);
+		escapeAndTrim(updateProfileDto);
+
+		// Retrieve user data from request
+		let user = await this.userService.findOne(userId);
+
+		// Fetch or create a profile for the user
+		const profile = await this.getOrCreateProfile(userId, updateProfileDto);
+
+		// Save profile changes to the database
+		await this.profileRepository.save(profile);
+
+		// Update user's profileId if it's not set
+		if (!user.profileId) {
+			await this.userRepository.update(userId,
+				{ profileId: profile.id }
+			);
+		}
+
+		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
+			lang: I18nContext?.current()?.lang
+		});
+	}
+
+	/**
+	 * Updates the user's profile image
+	 * @param {number} id - Profile's ID
+	 * @param {TMulterFile} image - The uploaded image file
+	 */
+	async updateUserProfileImage(id: number, image: TMulterFile) {
+		// Retrieve user data from request
+		let { userId, profile_image } = await this.findOne(id);
+
+		// finalize image upload process
+		const imagePath = await uploadFinalization(image, `/user/profile/${userId}`);
+
+		// Update user's profile image
+		await this.profileRepository.update({ userId }, { profile_image: imagePath });
+
+		// Remove old image file
+		fileRemoval(profile_image);
+
+		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
+			lang: I18nContext?.current()?.lang
+		});
+	}
+
+	/**
+	 * Remove User's profile image
+	 * @param {number} id - Profile's ID
+	 */
+	async removeUserProfileImage(id: number) {
+		// Retrieve user data from request
+		let { profile_image } = await this.findOne(id);
+
+		// Remove image file
+		fileRemoval(profile_image);
+
+		// Update user's profile image
+		await this.profileRepository.update({ id }, { profile_image: () => "NULL" });
+
+		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {
+			lang: I18nContext?.current()?.lang
+		});
+	}
+
+	/**
+	 * Retrieve single profile by ID
+	 * @param id - Profile's ID
+	 * @returns {Promise<ProfileEntity>} - Return profile data
+	 */
+	async findOne(id: number): Promise<ProfileEntity> {
+		// Retrieve profile data
+		const profile = await this.profileRepository.findOneBy({ id });
+
+		// Throw error if profile not found
+		if (!profile) {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.ProfileNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		return profile
 	}
 
 	/**

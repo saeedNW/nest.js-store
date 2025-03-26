@@ -53,6 +53,7 @@
 	"NotFoundMessages": {
 		"RoleNotFound": "Role not found",
 		"AddressNotFound": "Address not found",
-		"AccountNotFound": "Account not found"
+		"AccountNotFound": "Account not found",
+		"ProfileNotFound": "Profile not found"
 	}
 }
