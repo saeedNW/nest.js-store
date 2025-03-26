@@ -31,7 +31,7 @@ export class RoleController {
 	 */
 	@Post("/create")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Create new role" })
 	@CreateRoleResponses()
 	create(@Body() createRoleDto: CreateRoleDto) {
 		// filter client data and remove unwanted data
@@ -48,7 +48,7 @@ export class RoleController {
 	 * @returns {Promise<PaginatedResult<RoleEntity>>} - Return role list with pagination
 	 */
 	@Get()
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Retrieve roles list" })
 	@FindAllRolesResponses()
 	findAll(@Query() paginationDto: PaginationDto): Promise<PaginatedResult<RoleEntity>> {
 		// filter client data and remove unwanted data
@@ -61,27 +61,27 @@ export class RoleController {
 
 	/**
 	 * Retrieve role by ID
-	 * @param {number} id - Role ID
+	 * @param {number} roleId - Role ID
 	 * @returns {Promise<RoleEntity>} - Return role entity
 	 */
-	@Get("/:id")
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@Get("/:roleId")
+	@ApiOperation({ summary: "[ RBAC ] - Retrieve single role" })
 	@FindOneRoleResponses()
-	findOne(@Param('id', ParseIntPipe) id: number): Promise<RoleEntity> {
-		return this.roleService.findOne(id);
+	findOne(@Param('roleId', ParseIntPipe) roleId: number): Promise<RoleEntity> {
+		return this.roleService.findOne(roleId);
 	}
 
 	/**
 	 * Updates an existing role
-	 * @param {number} id - The ID of the role to update
+	 * @param {number} roleId - The ID of the role to update
 	 * @param {UpdateRoleDto} updateRoleDto - The new role details
 	 */
-	@Put("/:id")
+	@Put("/:roleId")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Update role" })
 	@UpdateRoleResponses()
 	update(
-		@Param("id", ParseIntPipe) id: number,
+		@Param("roleId", ParseIntPipe) roleId: number,
 		@Body() updateRoleDto: UpdateRoleDto
 	) {
 		// filter client data and remove unwanted data
@@ -89,18 +89,18 @@ export class RoleController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.roleService.update(id, updateRoleDto);
+		return this.roleService.update(roleId, updateRoleDto);
 	}
 
 	/**
 	 * Remove role by ID
-	 * @param id - Role ID
+	 * @param roleId - Role ID
 	 * @returns {Promise<string>} - Success message
 	 */
-	@Delete("/:id")
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@Delete("/:roleId")
+	@ApiOperation({ summary: "[ RBAC ] - remove Role" })
 	@RemoveRoleResponses()
-	remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
-		return this.roleService.remove(id);
+	remove(@Param('roleId', ParseIntPipe) roleId: number): Promise<string> {
+		return this.roleService.remove(roleId);
 	}
 }

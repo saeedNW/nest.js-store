@@ -106,7 +106,7 @@ export class UserController {
 	 */
 	@Get("/list")
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Retrieve users list" })
 	findAll(
 		@Query() paginationDto: PaginationDto,
 		@Query() findUserDto: FindUsersDto,
@@ -121,26 +121,26 @@ export class UserController {
 
 	/**
 	 * Retrieve user's data by ID
-	 * @param {number} id - User's ID
+	 * @param {number} userId - User's ID
 	 */
-	@Get("/single/:id")
+	@Get("/single/:userId")
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
-	findOne(@Param('id', ParseIntPipe) id: number) {
-		return this.userService.findOne(id)
+	@ApiOperation({ summary: "[ RBAC ] - Retrieve single user" })
+	findOne(@Param('userId', ParseIntPipe) userId: number) {
+		return this.userService.findOne(userId)
 	}
 
 	/**
 	 * Update user password admin process
-	 * @param {number} id - User's ID
+	 * @param {number} userId - User's ID
 	 * @param {UpdateUserPasswordDto} updatePasswordDto - client data for new password
 	 */
-	@Patch('/update-password/:id')
+	@Patch('/update-password/:userId')
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Update user password" })
 	updateUserPassword(
-		@Param('id', ParseIntPipe) id: number,
+		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updatePasswordDto: UpdateUserPasswordDto
 	) {
 		// filter client data and remove unwanted data
@@ -148,20 +148,20 @@ export class UserController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.userService.updateUserPassword(id, updatePasswordDto);
+		return this.userService.updateUserPassword(userId, updatePasswordDto);
 	}
 
 	/**
 	 * Update user's phone number
-	 * @param {number} id - User's ID
+	 * @param {number} userId - User's ID
 	 * @param {UpdatePhoneDto} updatePhoneDto - Client data for new phone
 	 */
-	@Patch('/update-phone/:id')
+	@Patch('/update-phone/:userId')
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - update user phone number" })
 	updateUserPhone(
-		@Param('id', ParseIntPipe) id: number,
+		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updatePhoneDto: UpdatePhoneDto
 	) {
 		// filter client data and remove unwanted data
@@ -169,20 +169,20 @@ export class UserController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.userService.updateUserPhone(id, updatePhoneDto);
+		return this.userService.updateUserPhone(userId, updatePhoneDto);
 	}
 
 	/**
 	 * Update user's role
-	 * @param {number} id - User's ID
+	 * @param {number} userId - User's ID
 	 * @param {UpdateUserRoleDto} updateUserRoleDto - New role data
 	 */
-	@Patch('/update-role/:id')
+	@Patch('/update-role/:userId')
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.role'])
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Update user role" })
 	assignRole(
-		@Param('id', ParseIntPipe) id: number,
+		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updateUserRoleDto: UpdateUserRoleDto
 	) {
 		// filter client data and remove unwanted data
@@ -190,6 +190,6 @@ export class UserController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.userService.assignRole(id, roleTitle);
+		return this.userService.assignRole(userId, roleTitle);
 	}
 }

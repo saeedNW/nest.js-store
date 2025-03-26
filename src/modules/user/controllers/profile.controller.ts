@@ -71,7 +71,7 @@ export class ProfileController {
 	@Put("/update/:userId")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - Update user profile" })
 	updateUserProfile(
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updateProfileDto: UpdateProfileDto
@@ -86,17 +86,17 @@ export class ProfileController {
 
 	/**
 	 * Updates the user's profile image
-	 * @param {number} id - profile's ID
+	 * @param {number} profileId - profile's ID
 	 * @param {UpdateProfileImageDto} updateProfileImageDto - Data Object containing profile image update details
 	 * @param {TMulterFile} image - The uploaded image file
 	 */
-	@Patch("/image/:id")
+	@Patch("/image/:profileId")
 	@UseInterceptors(FileInterceptor("image", multerImageUploader()))
 	@ApiConsumes(SwaggerConsumes.MULTIPART_FORM_DATA)
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
+	@ApiOperation({ summary: "[ RBAC ] - update profile image" })
 	updateUserProfileImage(
-		@Param('id', ParseIntPipe) id: number,
+		@Param('profileId', ParseIntPipe) profileId: number,
 		@Body() updateProfileImageDto: UpdateProfileImageDto,
 		@FileUploader() image: TMulterFile
 	) {
@@ -105,17 +105,17 @@ export class ProfileController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.profileService.updateUserProfileImage(id, image)
+		return this.profileService.updateUserProfileImage(profileId, image)
 	}
 
 	/**
 	 * Remove User's profile image
-	 * @param {number} id - Profile's ID
+	 * @param {number} profileId - Profile's ID
 	 */
-	@Delete("/image/:id")
+	@Delete("/image/:profileId")
 	@PermissionDecorator(Permissions['Users.data'])
-	@ApiOperation({ summary: "[ RBAC ]" })
-	removeUserProfileImage(@Param('id', ParseIntPipe) id: number) {
-		return this.profileService.removeUserProfileImage(id)
+	@ApiOperation({ summary: "[ RBAC ] - Remove profile image" })
+	removeUserProfileImage(@Param('profileId', ParseIntPipe) profileId: number) {
+		return this.profileService.removeUserProfileImage(profileId)
 	}
 }
