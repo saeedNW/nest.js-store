@@ -16,6 +16,15 @@ import { PaginationDto } from "src/common/utils/typeorm.pagination.utility";
 import { FindUsersDto } from "../dto/find-user.dto";
 import { Permissions } from "src/common/enums/permissions.enum";
 import { UpdateUserRoleDto } from "../dto/update-role.dto";
+import {
+	AssignRoleResponses,
+	findAllUsersResponses,
+	FindOneUserResponses,
+	RetrieveUserResponses,
+	UpdatePasswordResponses,
+	UpdatePhoneResponses,
+	VerifyPhoneResponses
+} from "../decorators/user-swagger-response.response";
 
 @Controller('user')
 @ApiTags("User")
@@ -33,6 +42,7 @@ export class UserController {
 	 * Retrieve the authenticated user's data.
 	 */
 	@Get()
+	@RetrieveUserResponses()
 	retrieveUser() {
 		return this.userService.retrieveUser();
 	}
@@ -43,6 +53,7 @@ export class UserController {
 	 */
 	@Patch('/update-password')
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@UpdatePasswordResponses()
 	updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
 		// filter client data and remove unwanted data
 		updatePasswordDto = plainToClass(UpdatePasswordDto, updatePasswordDto, {
@@ -59,6 +70,7 @@ export class UserController {
 	 */
 	@Patch("/update-phone")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@UpdatePhoneResponses()
 	async updatePhone(
 		@Body() updatePhoneDto: UpdatePhoneDto,
 		@Res({ passthrough: true }) response: Response
@@ -93,6 +105,7 @@ export class UserController {
 	 */
 	@Patch("/verify-phone")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@VerifyPhoneResponses()
 	verifyPhone(@Body() verifyPhoneDto: VerifyPhoneDto) {
 		return this.userService.verifyPhone(verifyPhoneDto.code);
 	}
@@ -107,6 +120,7 @@ export class UserController {
 	@Get("/list")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve users list" })
+	@findAllUsersResponses()
 	findAll(
 		@Query() paginationDto: PaginationDto,
 		@Query() findUserDto: FindUsersDto,
@@ -126,6 +140,7 @@ export class UserController {
 	@Get("/single/:userId")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve single user" })
+	@FindOneUserResponses()
 	findOne(@Param('userId', ParseIntPipe) userId: number) {
 		return this.userService.findOne(userId)
 	}
@@ -139,6 +154,7 @@ export class UserController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Update user password" })
+	@UpdatePasswordResponses()
 	updateUserPassword(
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updatePasswordDto: UpdateUserPasswordDto
@@ -160,6 +176,7 @@ export class UserController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - update user phone number" })
+	@UpdatePhoneResponses()
 	updateUserPhone(
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updatePhoneDto: UpdatePhoneDto
@@ -181,6 +198,7 @@ export class UserController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.role'])
 	@ApiOperation({ summary: "[ RBAC ] - Update user role" })
+	@AssignRoleResponses()
 	assignRole(
 		@Param('userId', ParseIntPipe) userId: number,
 		@Body() updateUserRoleDto: UpdateUserRoleDto

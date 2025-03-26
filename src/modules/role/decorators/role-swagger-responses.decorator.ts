@@ -14,9 +14,15 @@ import { InternalServerErrorResponse } from "src/common/responses/internal-serve
 import { BadRequestResponse } from "src/common/responses/bad-request.response";
 import { NotFoundResponse } from "src/common/responses/not-found.response";
 import { UnauthorizedResponse } from "src/common/responses/unauthorized.response";
-import { CreateRoleSuccess, FindAllRolesSuccess, FindOneRoleSuccess, RemoveRoleSuccess, UpdateRoleSuccess } from "../responses/role-success.response";
 import { AccessDeniedResponse } from "src/common/responses/access-denied.response";
 import { ConflictResponse } from "src/common/responses/conflict.response";
+import {
+	CreateRoleSuccess,
+	FindAllRolesSuccess,
+	FindOneRoleSuccess,
+	RemoveRoleSuccess,
+	UpdateRoleSuccess
+} from "../responses/role-success.response";
 
 export function CreateRoleResponses() {
 	return function (
