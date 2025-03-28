@@ -6,7 +6,7 @@ import { SwaggerConsumes } from "src/configs/swagger.config";
 import { UpdateProfileDto, UpdateProfileImageDto } from "../dto/update-profile.dto";
 import { plainToClass } from "class-transformer";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { multerImageUploader, TMulterFile } from "src/common/utils/multer.utility";
+import { multerFileUploader, TMulterFile } from "src/common/utils/multer.utility";
 import { ImageUploader } from "src/common/decorator/file-uploader.decorator";
 import { PermissionDecorator } from "src/common/decorator/permission.decorator";
 import { Permissions } from "src/common/enums/permissions.enum";
@@ -49,7 +49,7 @@ export class ProfileController {
 	 * @param {TMulterFile} image - The uploaded image file
 	 */
 	@Patch("/image")
-	@UseInterceptors(FileInterceptor("image", multerImageUploader()))
+	@UseInterceptors(FileInterceptor("image", multerFileUploader()))
 	@ApiConsumes(SwaggerConsumes.MULTIPART_FORM_DATA)
 	@UpdateProfileImageResponses()
 	updateProfileImage(
@@ -103,7 +103,7 @@ export class ProfileController {
 	 * @param {TMulterFile} image - The uploaded image file
 	 */
 	@Patch("/image/:profileId")
-	@UseInterceptors(FileInterceptor("image", multerImageUploader()))
+	@UseInterceptors(FileInterceptor("image", multerFileUploader()))
 	@ApiConsumes(SwaggerConsumes.MULTIPART_FORM_DATA)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - update profile image" })

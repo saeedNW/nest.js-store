@@ -193,10 +193,10 @@ export async function uploadFinalization(
 }
 
 /**
- * Creates a multer configuration object for handling image uploads. *
+ * Creates a multer configuration object for handling file uploads. *
  * @returns {Options} - A multer configuration object.
  */
-export function multerImageUploader(): Options {
+export function multerFileUploader(): Options {
 	return {
 		// Config storage option
 		storage: diskStorage({
