@@ -12,7 +12,7 @@ import { I18nContext } from 'nestjs-i18n';
  * to make the controller code cleaner and easier to maintain.
  */
 
-export function FileUploader() {
+export function ImageUploader() {
 	return UploadedFile(
 		new ParseFilePipe({
 			validators: [
@@ -28,7 +28,7 @@ export function FileUploader() {
 	);
 }
 
-export function OptionalFileUploader() {
+export function OptionalImageUploader() {
 	return UploadedFile(
 		new ParseFilePipe({
 			validators: [

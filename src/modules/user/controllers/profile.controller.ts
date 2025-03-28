@@ -7,7 +7,7 @@ import { UpdateProfileDto, UpdateProfileImageDto } from "../dto/update-profile.d
 import { plainToClass } from "class-transformer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { multerImageUploader, TMulterFile } from "src/common/utils/multer.utility";
-import { FileUploader } from "src/common/decorator/file-uploader.decorator";
+import { ImageUploader } from "src/common/decorator/file-uploader.decorator";
 import { PermissionDecorator } from "src/common/decorator/permission.decorator";
 import { Permissions } from "src/common/enums/permissions.enum";
 import {
@@ -54,7 +54,7 @@ export class ProfileController {
 	@UpdateProfileImageResponses()
 	updateProfileImage(
 		@Body() updateProfileImageDto: UpdateProfileImageDto,
-		@FileUploader() image: TMulterFile
+		@ImageUploader() image: TMulterFile
 	) {
 		// filter client data and remove unwanted data
 		updateProfileImageDto = plainToClass(UpdateProfileImageDto, updateProfileImageDto, {
@@ -111,7 +111,7 @@ export class ProfileController {
 	updateUserProfileImage(
 		@Param('profileId', ParseIntPipe) profileId: number,
 		@Body() updateProfileImageDto: UpdateProfileImageDto,
-		@FileUploader() image: TMulterFile
+		@ImageUploader() image: TMulterFile
 	) {
 		// filter client data and remove unwanted data
 		updateProfileImageDto = plainToClass(UpdateProfileImageDto, updateProfileImageDto, {
