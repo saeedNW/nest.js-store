@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { SmsProvidersEnum } from './enum/providers.enum';
-import { SmsProvider } from './providers/sms.provider';
+import { SmsProvider } from './interfaces/provider.interface';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()

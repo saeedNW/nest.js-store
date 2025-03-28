@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { SmsProvider } from "./sms.provider";
+import { SmsProvider } from "../interfaces/provider.interface";
 import { SmsIrTemplate } from "../enum/template.enum";
 import { firstValueFrom } from "rxjs";
 import { InternalServerErrorException } from "@nestjs/common";
