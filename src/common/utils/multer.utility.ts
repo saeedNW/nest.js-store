@@ -140,6 +140,8 @@ export function removeUploadedFiles(
  * @param {string} filePath - File location path
  */
 export function fileRemoval(filePath: string) {
+	if (!filePath) return;
+
 	// Convert file path to relative absolute path
 	filePath = resolve("./public" + convertToRelativePath(filePath));
 
