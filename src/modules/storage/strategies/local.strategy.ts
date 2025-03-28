@@ -2,6 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { StorageStrategy } from "../interface/strategy.interface";
 import { fileRemoval, uploadFinalization } from "src/common/utils/multer.utility";
 
+/**
+ * Local storage strategy
+ * @description In order to use this strategy you should use the multerFileUploader and express
+ * FileInterceptor for the controller methods => @UseInterceptors(FileInterceptor("image", multerFileUploader()))
+ */
 @Injectable()
 export class LocalStorageStrategy implements StorageStrategy {
 	/**

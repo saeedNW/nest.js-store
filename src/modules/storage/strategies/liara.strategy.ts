@@ -5,6 +5,8 @@ import { basename, extname } from "path";
 
 /**
  * Liara storage strategy
+ * @description In order to use this strategy you should use the file uploader interceptors
+ * located in this module for the controller methods => @UseInterceptors(S3SingleFile("image"))
  */
 @Injectable()
 export class LiaraStorageStrategy implements StorageStrategy {
