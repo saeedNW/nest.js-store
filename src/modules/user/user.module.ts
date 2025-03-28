@@ -12,13 +12,15 @@ import { UserService } from './services/user.service';
 import { ProfileService } from './services/profile.service';
 import { AddressService } from './services/address.service';
 import { RoleModule } from '../role/role.module';
+import { StorageModule } from '../storage/storage.module';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([UserEntity, AddressEntity, ProfileEntity]),
 		AuthModule,
 		SmsModule,
-		RoleModule
+		RoleModule,
+		StorageModule
 	],
 	controllers: [UserController, ProfileController, AddressController],
 	providers: [UserService, ProfileService, AddressService],

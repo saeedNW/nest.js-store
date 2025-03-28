@@ -9,8 +9,9 @@ import { UpdateProfileDto } from "../dto/update-profile.dto";
 import { deleteInvalidPropertyInObject } from "src/common/utils/functions.utils";
 import { escapeAndTrim } from "src/common/utils/sanitizer.utility";
 import { Request } from "express";
-import { fileRemoval, TMulterFile, uploadFinalization } from "src/common/utils/multer.utility";
+import { TMulterFile, uploadFinalization } from "src/common/utils/multer.utility";
 import { UserService } from "./user.service";
+import { StorageService } from "src/modules/storage/storage.service";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProfileService {
@@ -26,7 +27,9 @@ export class ProfileService {
 		// Register i18n service
 		private readonly i18n: I18nService,
 		// Register user service
-		private userService: UserService
+		private userService: UserService,
+		// Register storage service
+		private storageService:StorageService
 	) { }
 
 	/**
@@ -68,13 +71,13 @@ export class ProfileService {
 		let { id: userId, profile: { profile_image } } = this.getRequestUser();
 
 		// finalize image upload process
-		const imagePath = await uploadFinalization(image, `/user/profile/${userId}`);
+		const imagePath = await this.storageService.upload(image, `user/profile/${userId}`);
 
 		// Update user's profile image
 		await this.profileRepository.update({ userId }, { profile_image: imagePath });
 
 		// Remove old image file
-		fileRemoval(profile_image);
+		await this.storageService.RemoveFile(profile_image);
 
 		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
 			lang: I18nContext?.current()?.lang
@@ -89,7 +92,7 @@ export class ProfileService {
 		let { id: userId, profile: { profile_image } } = this.getRequestUser();
 
 		// Remove image file
-		fileRemoval(profile_image);
+		await this.storageService.RemoveFile(profile_image);
 
 		// Update user's profile image
 		await this.profileRepository.update({ userId }, { profile_image: () => "NULL" });
@@ -146,7 +149,7 @@ export class ProfileService {
 		await this.profileRepository.update({ userId }, { profile_image: imagePath });
 
 		// Remove old image file
-		fileRemoval(profile_image);
+		await this.storageService.RemoveFile(profile_image);
 
 		return this.i18n.t('locale.PublicMessages.SuccessUpdate', {
 			lang: I18nContext?.current()?.lang
@@ -162,7 +165,7 @@ export class ProfileService {
 		let { profile_image } = await this.findOne(id);
 
 		// Remove image file
-		fileRemoval(profile_image);
+		await this.storageService.RemoveFile(profile_image);
 
 		// Update user's profile image
 		await this.profileRepository.update({ id }, { profile_image: () => "NULL" });

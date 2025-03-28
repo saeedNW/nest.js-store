@@ -24,7 +24,7 @@ export class ProfileEntity extends BaseEntity {
 
 	@AfterLoad()
 	map() {
-		if (this.profile_image) {
+		if (this.profile_image && !(this.profile_image.includes("https") || this.profile_image.includes("http"))) {
 			this.profile_image = process.env.SERVER + this.profile_image;
 		}
 	}
