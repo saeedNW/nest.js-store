@@ -12,7 +12,7 @@ import { multerFileUploader, TMulterFile } from 'src/common/utils/multer.utility
 import { FileUploader } from 'src/common/decorator/file-uploader.decorator';
 
 @Controller('gallery')
-@ApiTags("Gallery`")
+@ApiTags("Gallery")
 export class GalleryController {
 	constructor(private readonly galleryService: GalleryService) { }
 
