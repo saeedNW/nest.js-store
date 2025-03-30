@@ -46,3 +46,19 @@ export function OptionalImageUploader() {
 		})
 	);
 }
+
+export function FileUploader() {
+	return UploadedFile(
+		new ParseFilePipe({
+			validators: [
+				new MaxFileSizeValidator({
+					maxSize: 15 * 1024 * 1024, // 15MB
+					message(maxSize) {
+						return String(I18nContext.current()?.t('locale.MulterMessages.LargeFile'));
+					},
+				}),
+				new FileTypeValidator({ fileType: "image/(png|jpg|jpeg|webp)|video/(mp4|mov|avi|mkv|x-matroska)" }),
+			],
+		})
+	);
+}

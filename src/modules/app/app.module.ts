@@ -11,6 +11,7 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { RedisModule } from '../redis/redis.module';
 import { RoleModule } from '../role/role.module';
+import { GalleryModule } from '../gallery/gallery.module';
 
 @Module({
 	imports: [
@@ -41,7 +42,8 @@ import { RoleModule } from '../role/role.module';
 		UserModule,
 		SmsModule,
 		AuthModule,
-		RoleModule
+		RoleModule,
+		GalleryModule
 	],
 	controllers: [AppController],
 	providers: [AppService],

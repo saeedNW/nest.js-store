@@ -54,6 +54,7 @@
 		"RoleNotFound": "Role not found",
 		"AddressNotFound": "Address not found",
 		"AccountNotFound": "Account not found",
-		"ProfileNotFound": "Profile not found"
+		"ProfileNotFound": "Profile not found",
+		"FileNotFound": "File not found"
 	}
 }

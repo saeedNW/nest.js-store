@@ -4,5 +4,6 @@ export enum EntityName {
 	OTP = "otp",
 	PROFILE = "profile",
 	ROLE = "role",
-	PERMISSION = "permission"
+	PERMISSION = "permission",
+	GALLERY = "gallery"
 }
