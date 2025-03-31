@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "type
 import { AddressEntity } from "./address.entity";
 import { ProfileEntity } from "./profile.entity";
 import { RoleEntity } from "src/modules/role/entities/role.entity";
+import { BlogEntity } from "src/modules/blog/entities/blog.entity";
 
 @Entity(EntityName.USER)
 export class UserEntity extends BaseTimestampedEntity {
@@ -26,4 +27,6 @@ export class UserEntity extends BaseTimestampedEntity {
 	profile: ProfileEntity;
 	@ManyToOne(() => RoleEntity, (role) => role.users, { eager: true, nullable: true })
 	role: RoleEntity;
+	@OneToMany(() => BlogEntity, (blog) => blog.author)
+	blogs: BlogEntity[];
 }

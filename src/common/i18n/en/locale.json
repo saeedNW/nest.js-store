@@ -44,7 +44,8 @@
 		"ProtectedRoleUpdate": "You cannot modify this role",
 		"EmptyPassword": "Password cannot be Empty",
 		"InvalidPassword": "The entered password is invalid",
-		"InvalidPhoneToken": "Invalid phone update token"
+		"InvalidPhoneToken": "Invalid phone update token",
+		"NotTheAuthor": "You are not this blog's author"
 	},
 	"ConflictMessages": {
 		"ConflictRole": "Duplicated Role title or label",
@@ -55,6 +56,7 @@
 		"AddressNotFound": "Address not found",
 		"AccountNotFound": "Account not found",
 		"ProfileNotFound": "Profile not found",
-		"FileNotFound": "File not found"
+		"FileNotFound": "File not found",
+		"BlogNotFound": "Blog not found"
 	}
 }

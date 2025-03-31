@@ -10,6 +10,7 @@ import * as path from 'path';
 import { RedisModule } from '../redis/redis.module';
 import { RoleModule } from '../role/role.module';
 import { GalleryModule } from '../gallery/gallery.module';
+import { BlogModule } from '../blog/blog.module';
 
 @Module({
 	imports: [
@@ -41,7 +42,8 @@ import { GalleryModule } from '../gallery/gallery.module';
 		SmsModule,
 		AuthModule,
 		RoleModule,
-		GalleryModule
+		GalleryModule,
+		BlogModule
 	],
 	controllers: [],
 	providers: [],

@@ -5,5 +5,6 @@ export enum EntityName {
 	PROFILE = "profile",
 	ROLE = "role",
 	PERMISSION = "permission",
-	GALLERY = "gallery"
+	GALLERY = "gallery",
+	BLOG = "blog",
 }

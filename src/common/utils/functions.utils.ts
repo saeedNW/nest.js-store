@@ -68,3 +68,20 @@ export function deleteInvalidPropertyInObject(
 		}
 	});
 }
+
+/**
+ * Convert a string to a valid blog slug
+ * @param {string} str - string that should be converted to slug
+ * @returns {string} created slug
+ */
+export const createSlug = (str: string): string => {
+	return str
+		.replace(/[،ًًًٌٍُِ\.\+\-_)(*&^%$#@!~'";:?><«»`ء]+/g, "")
+		?.replace(/[\s]+/g, "-");
+};
+
+/**
+ * Create and return a random number
+ * @returns {string} - A random number
+ */
+export const randomId = (): string => Math.random().toString(36).substring(2);
