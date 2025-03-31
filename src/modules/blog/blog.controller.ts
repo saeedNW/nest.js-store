@@ -1,4 +1,7 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, Query, Put } from '@nestjs/common';
+import {
+	Controller, Get, Post, Body, Param,
+	Delete, ParseIntPipe, Query, Put
+} from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -9,6 +12,13 @@ import { PermissionDecorator } from 'src/common/decorator/permission.decorator';
 import { Permissions } from 'src/common/enums/permissions.enum';
 import { PaginationDto } from 'src/common/utils/typeorm.pagination.utility';
 import { FindBlogsDto, FindOneBlogDto } from './dto/find-blog.dto';
+import {
+	CreateBlogResponses,
+	FindAllBlogsResponses,
+	FindOneBlogResponses,
+	RemoveBlogResponses,
+	UpdateBlogResponses
+} from './decorators/swagger-responses.decorator';
 
 @Controller('blog')
 @ApiTags("Blog")
@@ -24,6 +34,7 @@ export class BlogController {
 	@PermissionDecorator(Permissions['Blog.writer'], Permissions['Blog.manager'])
 	@ApiOperation({ summary: "[ RBAC ] - Create new blog" })
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@CreateBlogResponses()
 	create(@Body() createBlogDto: CreateBlogDto) {
 		return this.blogService.create(createBlogDto);
 	}
@@ -34,6 +45,7 @@ export class BlogController {
 	 * @param {FindBlogsDto} findBlogsDto - Search filters for blogs
 	 */
 	@Get()
+	@FindAllBlogsResponses()
 	findAll(
 		@Query() paginationDto: PaginationDto,
 		@Query() findBlogsDto: FindBlogsDto,
@@ -46,6 +58,7 @@ export class BlogController {
 	 * @param {FindOneBlogDto} params - Blog ID or Slug
 	 */
 	@Get(':find')
+	@FindOneBlogResponses()
 	findOne(@Param() params: FindOneBlogDto) {
 		return this.blogService.findOne(params.find);
 	}
@@ -64,6 +77,7 @@ export class BlogController {
 		description: "<b>Note:</b> A user with the blog writer permission can only update their own blog, while a user with the blog manager or system master permission can update any blog"
 	})
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@UpdateBlogResponses()
 	update(@Param('blogId', ParseIntPipe) blogId: number, @Body() updateBlogDto: UpdateBlogDto) {
 		return this.blogService.update(blogId, updateBlogDto);
 	}
@@ -81,6 +95,7 @@ export class BlogController {
 		description: "<b>Note:</b> A user with the blog writer permission can only remove their own blog, while a user with the blog manager or system master permission can remove any blog"
 	})
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@RemoveBlogResponses()
 	remove(@Param('blogId', ParseIntPipe) blogId: number) {
 		return this.blogService.remove(blogId);
 	}
