@@ -1,4 +1,7 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe, UseInterceptors } from '@nestjs/common';
+import {
+	Controller, Get, Post, Body, Param,
+	Delete, ParseIntPipe, UseInterceptors
+} from '@nestjs/common';
 import { GalleryService } from './gallery.service';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { AuthDecorator } from 'src/common/decorator/auth.decorator';
@@ -10,6 +13,12 @@ import { plainToClass } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerFileUploader, TMulterFile } from 'src/common/utils/multer.utility';
 import { FileUploader } from 'src/common/decorator/file-uploader.decorator';
+import {
+	FileUploadResponses,
+	FindAllFilesResponses,
+	FindOneFileResponses,
+	RemoveFileResponses
+} from './decorators/swagger-responses.decorator';
 
 @Controller('gallery')
 @ApiTags("Gallery")
@@ -27,6 +36,7 @@ export class GalleryController {
 	@ApiOperation({ summary: "[ RBAC ] - Upload new file [Image/Video]" })
 	@UseInterceptors(FileInterceptor("file", multerFileUploader()))
 	@ApiConsumes(SwaggerConsumes.MULTIPART_FORM_DATA)
+	@FileUploadResponses()
 	create(
 		@Body() createGalleryDto: CreateGalleryDto,
 		@FileUploader() file: TMulterFile
@@ -43,6 +53,7 @@ export class GalleryController {
 	 * Retrieve all files from gallery
 	 */
 	@Get()
+	@FindAllFilesResponses()
 	findAll() {
 		return this.galleryService.findAll();
 	}
@@ -52,6 +63,7 @@ export class GalleryController {
 	 * @param {number} fileId - The file ID
 	 */
 	@Get(':fileId')
+	@FindOneFileResponses()
 	findOne(@Param('fileId', ParseIntPipe) fileId: number) {
 		return this.galleryService.findOne(fileId);
 	}
@@ -64,6 +76,7 @@ export class GalleryController {
 	@AuthDecorator()
 	@PermissionDecorator(Permissions['Gallery.manager'])
 	@ApiOperation({ summary: "[ RBAC ] - File removal" })
+	@RemoveFileResponses()
 	remove(@Param('fileId', ParseIntPipe) fileId: number) {
 		return this.galleryService.remove(fileId);
 	}
