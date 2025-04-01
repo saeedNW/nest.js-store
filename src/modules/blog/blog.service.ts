@@ -84,6 +84,34 @@ export class BlogService {
 	}
 
 	/**
+	 * Retrieves a paginated list of the user's blogs based on search criteria
+	 * @param {PaginationDto} paginationDto - Pagination details
+	 * @param {FindBlogsDto} findBlogsDto - Search filters for blogs
+	 * @returns {Promise<PaginatedResult<BlogEntity>>} - A paginated list of user's blogs
+	 */
+	async findMyBlogs(paginationDto: PaginationDto, findBlogsDto: FindBlogsDto): Promise<PaginatedResult<BlogEntity>> {
+		// Sanitize client data
+		deleteInvalidPropertyInObject(findBlogsDto);
+		escapeAndTrim(findBlogsDto);
+
+		// Retrieve user data from request
+		let { id: authorId } = this.getRequestUser();
+
+		// Create the base query builder
+		const queryBuilder = this.buildBlogQuery(findBlogsDto, authorId);
+
+		// Paginate the results
+		const blogs = await paginate(
+			paginationDto,
+			this.blogRepository,
+			queryBuilder,
+			`${process.env.SERVER}/blog`
+		);
+
+		return blogs
+	}
+
+	/**
 	 * Finds a blog post by its ID
 	 * @param {number | string} find - Blog ID or slug
 	 * @returns {Promise<BlogEntity>} - The blog entity
@@ -173,9 +201,10 @@ export class BlogService {
 	/**
 	 * Builds the query for retrieving blogs based on filters
 	 * @param {FindBlogsDto} filters - The filters for searching blogs
+	 * @param {number} authorId - The author ID
 	 * @returns {SelectQueryBuilder<UserEntity>} - The built query
 	 */
-	private buildBlogQuery(filters: FindBlogsDto): SelectQueryBuilder<BlogEntity> {
+	private buildBlogQuery(filters: FindBlogsDto, authorId?: number): SelectQueryBuilder<BlogEntity> {
 		const queryBuilder = this.blogRepository
 			.createQueryBuilder("blog")
 			.leftJoin("blog.author", "author")
@@ -187,6 +216,11 @@ export class BlogService {
 				"profile.last_name",
 				"profile.profile_image",
 			]);
+
+		// Apply author ID filter if provided
+		if (authorId) {
+			queryBuilder.andWhere("author.id = :authorId", { authorId });
+		}
 
 		// Apply search filter if provided
 		if (filters.search) {

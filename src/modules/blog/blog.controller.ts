@@ -54,6 +54,23 @@ export class BlogController {
 	}
 
 	/**
+	 * Retrieves a paginated list of the user's blogs based on search criteria
+	 * @param {PaginationDto} paginationDto - Pagination details
+	 * @param {FindBlogsDto} findBlogsDto - Search filters for blogs
+	 */
+	@Get('/mine')
+	@AuthDecorator()
+	@PermissionDecorator(Permissions['Blog.writer'], Permissions['Blog.manager'])
+	@ApiOperation({ summary: "[ RBAC ] - Create new blog" })
+	@FindAllBlogsResponses()
+	findMyBlogs(
+		@Query() paginationDto: PaginationDto,
+		@Query() findBlogsDto: FindBlogsDto,
+	) {
+		return this.blogService.findMyBlogs(paginationDto, findBlogsDto);
+	}
+
+	/**
 	 * Finds a blog post by its ID or slug
 	 * @param {FindOneBlogDto} params - Blog ID or Slug
 	 */
