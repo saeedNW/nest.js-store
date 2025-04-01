@@ -7,22 +7,29 @@ import { UserEntity } from "./user.entity";
 export class AddressEntity extends BaseTimestampedEntity {
 	@Column()
 	title: string;
+
 	@Column()
 	province: string;
+
 	@Column()
 	city: string;
+
 	@Column()
 	address: string;
+
 	@Column()
 	postal_code: string;
+
 	@Column({
 		type: 'geography',
 		spatialFeatureType: 'Point',
 		srid: 4326,
 	})
 	location: Point
+
 	@Column()
 	userId: number;
+
 	@ManyToOne(() => UserEntity, (user) => user.address, { onDelete: "CASCADE" })
 	user: UserEntity;
 }

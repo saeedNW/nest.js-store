@@ -7,20 +7,28 @@ import { EntityName } from "src/common/enums/entity-name.enum";
 export class ProfileEntity extends BaseEntity {
 	@Column({ nullable: true })
 	first_name: string;
+
 	@Column({ nullable: true })
 	last_name: string;
+
 	@Column({ nullable: true })
 	bio: string;
+
 	@Column({ nullable: true })
 	profile_image: string;
+
 	@Column({ nullable: true })
 	birthday: Date;
+
 	@Column()
 	userId: number;
+
 	@OneToOne(() => UserEntity, (user) => user.profile, { onDelete: "CASCADE" })
 	user: UserEntity;
+
 	@UpdateDateColumn()
 	updated_at: Date;
+
 
 	@AfterLoad()
 	map() {

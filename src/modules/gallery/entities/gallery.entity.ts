@@ -6,14 +6,19 @@ import { EntityName } from "src/common/enums/entity-name.enum";
 export class GalleryEntity extends BaseEntity {
 	@Column()
 	name: string;
+
 	@Column()
 	address: string;
+
 	@Column()
 	mimeType: string;
+
 	@Column({ type: 'bigint' })
 	size: number;
+
 	@Column({ nullable: true })
 	alt: string;
+
 	@CreateDateColumn()
 	created_at: Date;
 

@@ -7,6 +7,7 @@ import { RoleEntity } from "./role.entity";
 export class PermissionEntity extends BaseEntity {
 	@Column({ unique: true })
 	title: string;
+
 	@ManyToMany(() => RoleEntity, (role) => role.permissions)
 	roles: RoleEntity[];
 }

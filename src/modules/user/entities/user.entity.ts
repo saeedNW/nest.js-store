@@ -10,23 +10,32 @@ import { BlogEntity } from "src/modules/blog/entities/blog.entity";
 export class UserEntity extends BaseTimestampedEntity {
 	@Column({ unique: true })
 	phone: string;
+
 	@Column({ nullable: true })
 	new_phone: string;
+
 	@Column({ nullable: true, default: false })
 	verify_phone: boolean;
+
 	@Column({ nullable: true })
 	password?: string;
+
 	@Column({ nullable: true })
 	token?: string;
+
 	@OneToMany(() => AddressEntity, (address) => address.user)
 	address: AddressEntity[];
+
 	@Column({ nullable: true })
 	profileId: number;
+
 	@OneToOne(() => ProfileEntity, (profile) => profile.user, { nullable: true })
 	@JoinColumn()
 	profile: ProfileEntity;
+
 	@ManyToOne(() => RoleEntity, (role) => role.users, { eager: true, nullable: true })
 	role: RoleEntity;
+
 	@OneToMany(() => BlogEntity, (blog) => blog.author)
 	blogs: BlogEntity[];
 }

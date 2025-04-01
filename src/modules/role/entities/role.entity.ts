@@ -8,11 +8,14 @@ import { UserEntity } from "src/modules/user/entities/user.entity";
 export class RoleEntity extends BaseTimestampedEntity {
 	@Column({ unique: true })
 	title: string;
+
 	@Column({ unique: true })
 	label: string;
+
 	@ManyToMany(() => PermissionEntity, (permission) => permission.roles)
 	@JoinTable()
 	permissions: PermissionEntity[];
+
 	@OneToMany(() => UserEntity, (user) => user.role)
 	users: UserEntity[];
 }

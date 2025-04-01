@@ -8,18 +8,25 @@ import { UserEntity } from "src/modules/user/entities/user.entity";
 export class BlogEntity extends BaseTimestampedEntity {
 	@Column()
 	title: string;
+
 	@Column()
 	description: string;
+
 	@Column()
 	content: string;
+
 	@Column({ nullable: true })
 	image: string;
+
 	@Column({ default: BlogStatus.DRAFT })
 	status: string;
+
 	@Column({ unique: true })
 	slug: string;
+
 	@Column()
 	authorId: number;
+
 	@ManyToOne(() => UserEntity, (user) => user.blogs, { onDelete: "CASCADE" })
 	author: UserEntity;
 }
