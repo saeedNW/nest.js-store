@@ -60,24 +60,24 @@ export class GalleryController {
 
 	/**
 	 * Retrieve single file from gallery by ID
-	 * @param {number} fileId - The file ID
+	 * @param {number} id - The file ID
 	 */
-	@Get(':fileId')
+	@Get(':id')
 	@FindOneFileResponses()
-	findOne(@Param('fileId', ParseIntPipe) fileId: number) {
-		return this.galleryService.findOne(fileId);
+	findOne(@Param('id', ParseIntPipe) id: number) {
+		return this.galleryService.findOne(id);
 	}
 
 	/**
 	 * Retrieve a file from gallery by ID
-	 * @param {number} fileId - The file ID
+	 * @param {number} id - The file ID
 	 */
-	@Delete(':fileId')
+	@Delete(':id')
 	@AuthDecorator()
 	@PermissionDecorator(Permissions['Gallery.manager'])
 	@ApiOperation({ summary: "[ RBAC ] - File removal" })
 	@RemoveFileResponses()
-	remove(@Param('fileId', ParseIntPipe) fileId: number) {
-		return this.galleryService.remove(fileId);
+	remove(@Param('id', ParseIntPipe) id: number) {
+		return this.galleryService.remove(id);
 	}
 }

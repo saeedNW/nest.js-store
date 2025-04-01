@@ -98,18 +98,18 @@ export class ProfileController {
 
 	/**
 	 * Updates the user's profile image
-	 * @param {number} profileId - profile's ID
+	 * @param {number} id - profile's ID
 	 * @param {UpdateProfileImageDto} updateProfileImageDto - Data Object containing profile image update details
 	 * @param {TMulterFile} image - The uploaded image file
 	 */
-	@Patch("/image/:profileId")
+	@Patch("/image/:id")
 	@UseInterceptors(FileInterceptor("image", multerFileUploader()))
 	@ApiConsumes(SwaggerConsumes.MULTIPART_FORM_DATA)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - update profile image" })
 	@UpdateUserProfileImageResponses()
 	updateUserProfileImage(
-		@Param('profileId', ParseIntPipe) profileId: number,
+		@Param('id', ParseIntPipe) id: number,
 		@Body() updateProfileImageDto: UpdateProfileImageDto,
 		@ImageUploader() image: TMulterFile
 	) {
@@ -118,18 +118,18 @@ export class ProfileController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.profileService.updateUserProfileImage(profileId, image)
+		return this.profileService.updateUserProfileImage(id, image)
 	}
 
 	/**
 	 * Remove User's profile image
-	 * @param {number} profileId - Profile's ID
+	 * @param {number} id - Profile's ID
 	 */
-	@Delete("/image/:profileId")
+	@Delete("/image/:id")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Remove profile image" })
 	@RemoveUserProfileImageResponses()
-	removeUserProfileImage(@Param('profileId', ParseIntPipe) profileId: number) {
-		return this.profileService.removeUserProfileImage(profileId)
+	removeUserProfileImage(@Param('id', ParseIntPipe) id: number) {
+		return this.profileService.removeUserProfileImage(id)
 	}
 }

@@ -94,7 +94,7 @@ export class GalleryService {
 		// Remove file from storage
 		await this.storageService.RemoveFile(file.address)
 
-		this.i18n.t('locale.PublicMessages.SuccessRemoval', {
+		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {
 			lang: I18nContext?.current()?.lang
 		});
 	}

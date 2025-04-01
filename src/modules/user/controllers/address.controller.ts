@@ -131,46 +131,46 @@ export class AddressController {
 
 	/**
 	 * Retrieve single address data
-	 * @param {number} addressId - Address's ID
+	 * @param {number} id - Address's ID
 	 */
-	@Get("/single/:addressId")
+	@Get("/single/:id")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve single address" })
 	@findUserSingleAddressResponses()
-	retrieveAddress(@Param('addressId', ParseIntPipe) addressId: number) {
-		return this.addressService.retrieveAddress(addressId);
+	retrieveAddress(@Param('id', ParseIntPipe) id: number) {
+		return this.addressService.retrieveAddress(id);
 	}
 
 	/**
 	 * Update user's address
-	 * @param {number} addressId - Address's ID
+	 * @param {number} id - Address's ID
 	 * @param {UpdateAddressDto} updateAddressDto - Client's address data
 	 */
-	@Put("/update/:addressId")
+	@Put("/update/:id")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Update address info" })
 	@UpdateUserAddressResponses()
 	updateForUser(
-		@Param('addressId', ParseIntPipe) addressId: number,
+		@Param('id', ParseIntPipe) id: number,
 		@Body() updateAddressDto: UpdateAddressDto
 	) {
 		updateAddressDto = plainToClass(UpdateAddressDto, updateAddressDto, {
 			excludeExtraneousValues: true,
 		});
 
-		return this.addressService.updateUserAddress(addressId, updateAddressDto);
+		return this.addressService.updateUserAddress(id, updateAddressDto);
 	}
 
 	/**
 	 * Remove user's address by ID
-	 * @param {number} addressId - Address ID
+	 * @param {number} id - Address ID
 	 */
-	@Delete("/remove/:addressId")
+	@Delete("/remove/:id")
 	@PermissionDecorator(Permissions['Users.data'])
 	@ApiOperation({ summary: "[ RBAC ] - Remove address" })
 	@RemoveUserAddressResponses()
-	removeForUser(@Param('addressId', ParseIntPipe) addressId: number) {
-		return this.addressService.removeUserAddress(addressId);
+	removeForUser(@Param('id', ParseIntPipe) id: number) {
+		return this.addressService.removeUserAddress(id);
 	}
 }

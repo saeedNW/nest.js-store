@@ -82,10 +82,10 @@ export class BlogController {
 
 	/**
 	 * Updates an existing blog post
-	 * @param {number} blogId - Blog ID
+	 * @param {number} id - Blog ID
 	 * @param {UpdateBlogDto} updateBlogDto - Updated blog data
 	 */
-	@Put(':blogId')
+	@Put(':id')
 	@Post()
 	@AuthDecorator()
 	@PermissionDecorator(Permissions['Blog.writer'], Permissions['Blog.manager'])
@@ -95,15 +95,15 @@ export class BlogController {
 	})
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@UpdateBlogResponses()
-	update(@Param('blogId', ParseIntPipe) blogId: number, @Body() updateBlogDto: UpdateBlogDto) {
-		return this.blogService.update(blogId, updateBlogDto);
+	update(@Param('id', ParseIntPipe) id: number, @Body() updateBlogDto: UpdateBlogDto) {
+		return this.blogService.update(id, updateBlogDto);
 	}
 
 	/**
 	 * Remove blog
-	 * @param {number} blogId - Blog ID
+	 * @param {number} id - Blog ID
 	 */
-	@Delete(':blogId')
+	@Delete(':id')
 	@Post()
 	@AuthDecorator()
 	@PermissionDecorator(Permissions['Blog.writer'], Permissions['Blog.manager'])
@@ -113,7 +113,7 @@ export class BlogController {
 	})
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@RemoveBlogResponses()
-	remove(@Param('blogId', ParseIntPipe) blogId: number) {
-		return this.blogService.remove(blogId);
+	remove(@Param('id', ParseIntPipe) id: number) {
+		return this.blogService.remove(id);
 	}
 }

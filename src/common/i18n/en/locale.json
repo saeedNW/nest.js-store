@@ -1,6 +1,7 @@
 {
 	"PublicMessages": {
 		"Successfully": "The process ended successfully",
+		"SuccessCreate": "The item has been created successfully",
 		"SuccessUpdate": "Data has been updated successfully",
 		"SuccessRemoval": "The item has been removed successfully",
 		"AccessDenied": "Your access to this service was denied"

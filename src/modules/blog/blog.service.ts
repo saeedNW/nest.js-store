@@ -53,7 +53,7 @@ export class BlogService {
 		// Save blog data to database
 		await this.blogRepository.save(blog);
 
-		return this.i18n.t('locale.PublicMessages.Successfully', {
+		return this.i18n.t('locale.PublicMessages.SuccessCreate', {
 			lang: I18nContext?.current()?.lang
 		});
 	}

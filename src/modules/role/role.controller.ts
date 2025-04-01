@@ -61,27 +61,27 @@ export class RoleController {
 
 	/**
 	 * Retrieve role by ID
-	 * @param {number} roleId - Role ID
+	 * @param {number} id - Role ID
 	 * @returns {Promise<RoleEntity>} - Return role entity
 	 */
-	@Get("/:roleId")
+	@Get("/:id")
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve single role" })
 	@FindOneRoleResponses()
-	findOne(@Param('roleId', ParseIntPipe) roleId: number): Promise<RoleEntity> {
-		return this.roleService.findOne(roleId);
+	findOne(@Param('id', ParseIntPipe) id: number): Promise<RoleEntity> {
+		return this.roleService.findOne(id);
 	}
 
 	/**
 	 * Updates an existing role
-	 * @param {number} roleId - The ID of the role to update
+	 * @param {number} id - The ID of the role to update
 	 * @param {UpdateRoleDto} updateRoleDto - The new role details
 	 */
-	@Put("/:roleId")
+	@Put("/:id")
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@ApiOperation({ summary: "[ RBAC ] - Update role" })
 	@UpdateRoleResponses()
 	update(
-		@Param("roleId", ParseIntPipe) roleId: number,
+		@Param("id", ParseIntPipe) id: number,
 		@Body() updateRoleDto: UpdateRoleDto
 	) {
 		// filter client data and remove unwanted data
@@ -89,18 +89,18 @@ export class RoleController {
 			excludeExtraneousValues: true,
 		});
 
-		return this.roleService.update(roleId, updateRoleDto);
+		return this.roleService.update(id, updateRoleDto);
 	}
 
 	/**
 	 * Remove role by ID
-	 * @param roleId - Role ID
+	 * @param id - Role ID
 	 * @returns {Promise<string>} - Success message
 	 */
-	@Delete("/:roleId")
+	@Delete("/:id")
 	@ApiOperation({ summary: "[ RBAC ] - remove Role" })
 	@RemoveRoleResponses()
-	remove(@Param('roleId', ParseIntPipe) roleId: number): Promise<string> {
-		return this.roleService.remove(roleId);
+	remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
+		return this.roleService.remove(id);
 	}
 }
