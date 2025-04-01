@@ -7,4 +7,5 @@ export enum EntityName {
 	PERMISSION = "permission",
 	GALLERY = "gallery",
 	BLOG = "blog",
+	CATEGORY = "category",
 }

@@ -11,6 +11,7 @@ import { RedisModule } from '../redis/redis.module';
 import { RoleModule } from '../role/role.module';
 import { GalleryModule } from '../gallery/gallery.module';
 import { BlogModule } from '../blog/blog.module';
+import { CategoryModule } from '../category/category.module';
 
 @Module({
 	imports: [
@@ -43,7 +44,8 @@ import { BlogModule } from '../blog/blog.module';
 		AuthModule,
 		RoleModule,
 		GalleryModule,
-		BlogModule
+		BlogModule,
+		CategoryModule,
 	],
 	controllers: [],
 	providers: [],

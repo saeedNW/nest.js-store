@@ -5,5 +5,6 @@ export enum Permissions {
 	"Users.role" = "user_role",
 	"Gallery.manager" = "gallery_manager",
 	"Blog.writer" = "blog_writer",
-	"Blog.manager" = "blog_manager"
+	"Blog.manager" = "blog_manager",
+	"Category.manager" = "category_manager"
 }

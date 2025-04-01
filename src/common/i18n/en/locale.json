@@ -46,11 +46,13 @@
 		"EmptyPassword": "Password cannot be Empty",
 		"InvalidPassword": "The entered password is invalid",
 		"InvalidPhoneToken": "Invalid phone update token",
+		"InvalidParentType": "The parent's type is not the same as the category's type",
 		"NotTheAuthor": "You are not this blog's author"
 	},
 	"ConflictMessages": {
 		"ConflictRole": "Duplicated Role title or label",
-		"ConflictPhone": "Duplicated phone number"
+		"ConflictPhone": "Duplicated phone number",
+		"ConflictCategory": "Duplicated category title"
 	},
 	"NotFoundMessages": {
 		"RoleNotFound": "Role not found",
@@ -58,6 +60,7 @@
 		"AccountNotFound": "Account not found",
 		"ProfileNotFound": "Profile not found",
 		"FileNotFound": "File not found",
-		"BlogNotFound": "Blog not found"
+		"BlogNotFound": "Blog not found",
+		"CategoryNotFound": "Category not found"
 	}
 }
