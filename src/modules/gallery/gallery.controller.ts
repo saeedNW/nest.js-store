@@ -25,6 +25,29 @@ import {
 export class GalleryController {
 	constructor(private readonly galleryService: GalleryService) { }
 
+	// ===================== Public APIs =====================
+
+	/**
+	 * Retrieve all files from gallery
+	 */
+	@Get()
+	@FindAllFilesResponses()
+	findAll() {
+		return this.galleryService.findAll();
+	}
+
+	/**
+	 * Retrieve single file from gallery by ID
+	 * @param {number} id - The file ID
+	 */
+	@Get(':id')
+	@FindOneFileResponses()
+	findOne(@Param('id', ParseIntPipe) id: number) {
+		return this.galleryService.findOne(id);
+	}
+
+	// ===================== Admin APIs ======================
+
 	/**
 	 * Upload new file to gallery
 	 * @param {CreateGalleryDto} createGalleryDto - New file data
@@ -47,25 +70,6 @@ export class GalleryController {
 		});
 
 		return this.galleryService.create(file, createGalleryDto);
-	}
-
-	/**
-	 * Retrieve all files from gallery
-	 */
-	@Get()
-	@FindAllFilesResponses()
-	findAll() {
-		return this.galleryService.findAll();
-	}
-
-	/**
-	 * Retrieve single file from gallery by ID
-	 * @param {number} id - The file ID
-	 */
-	@Get(':id')
-	@FindOneFileResponses()
-	findOne(@Param('id', ParseIntPipe) id: number) {
-		return this.galleryService.findOne(id);
 	}
 
 	/**

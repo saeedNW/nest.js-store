@@ -15,35 +15,7 @@ import { PaginationDto } from 'src/common/utils/typeorm.pagination.utility';
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) { }
 
-	/**
-	 * Create new category
-	 * @param {CreateCategoryDto} createCategoryDto - New category data
-	 */
-	@Post()
-	@AuthDecorator()
-	@PermissionDecorator(Permissions['Category.manager'])
-	@ApiOperation({ summary: "[ RBAC ] - Create new category" })
-	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	create(@Body() createCategoryDto: CreateCategoryDto) {
-		// filter client data and remove unwanted data
-		createCategoryDto = plainToClass(CreateCategoryDto, createCategoryDto, {
-			excludeExtraneousValues: true,
-		});
-
-		return this.categoryService.create(createCategoryDto);
-	}
-
-	/**
-	 * Retrieve categories with pagination and the parent title
-	 * @param {PaginationDto} paginationDto - Pagination data
-	 */
-	@Get()
-	@AuthDecorator()
-	@PermissionDecorator(Permissions['Category.manager'])
-	@ApiOperation({ summary: "[ RBAC ] - Retrieve categories list" })
-	findAll(@Query() paginationDto: PaginationDto) {
-		return this.categoryService.findAll(paginationDto);
-	}
+	// ===================== Public APIs =====================
 
 	/**
 	 * Retrieves all categories in a hierarchical structure
@@ -76,6 +48,38 @@ export class CategoryController {
 	@Get(':id')
 	findOne(@Param('id', ParseIntPipe) id: number) {
 		return this.categoryService.findOne(id);
+	}
+
+	// ===================== Admin APIs ======================
+
+	/**
+	 * Create new category
+	 * @param {CreateCategoryDto} createCategoryDto - New category data
+	 */
+	@Post()
+	@AuthDecorator()
+	@PermissionDecorator(Permissions['Category.manager'])
+	@ApiOperation({ summary: "[ RBAC ] - Create new category" })
+	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	create(@Body() createCategoryDto: CreateCategoryDto) {
+		// filter client data and remove unwanted data
+		createCategoryDto = plainToClass(CreateCategoryDto, createCategoryDto, {
+			excludeExtraneousValues: true,
+		});
+
+		return this.categoryService.create(createCategoryDto);
+	}
+
+	/**
+	 * Retrieve categories with pagination and the parent title
+	 * @param {PaginationDto} paginationDto - Pagination data
+	 */
+	@Get()
+	@AuthDecorator()
+	@PermissionDecorator(Permissions['Category.manager'])
+	@ApiOperation({ summary: "[ RBAC ] - Retrieve categories list" })
+	findAll(@Query() paginationDto: PaginationDto) {
+		return this.categoryService.findAll(paginationDto);
 	}
 
 	/**

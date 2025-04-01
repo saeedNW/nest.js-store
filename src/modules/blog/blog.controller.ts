@@ -25,19 +25,7 @@ import {
 export class BlogController {
 	constructor(private readonly blogService: BlogService) { }
 
-	/**
-	 * Creates a new blog post
-	 * @param {CreateBlogDto} createBlogDto - Blog creation data
-	 */
-	@Post()
-	@AuthDecorator()
-	@PermissionDecorator(Permissions['Blog.writer'], Permissions['Blog.manager'])
-	@ApiOperation({ summary: "[ RBAC ] - Create new blog" })
-	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
-	@CreateBlogResponses()
-	create(@Body() createBlogDto: CreateBlogDto) {
-		return this.blogService.create(createBlogDto);
-	}
+	// ===================== Public APIs =====================
 
 	/**
 	 * Retrieves a paginated list of blogs based on search criteria
@@ -51,6 +39,32 @@ export class BlogController {
 		@Query() findBlogsDto: FindBlogsDto,
 	) {
 		return this.blogService.findAll(paginationDto, findBlogsDto);
+	}
+
+	/**
+	 * Finds a blog post by its ID or slug
+	 * @param {FindOneBlogDto} params - Blog ID or Slug
+	 */
+	@Get(':find')
+	@FindOneBlogResponses()
+	findOne(@Param() params: FindOneBlogDto) {
+		return this.blogService.findOne(params.find);
+	}
+
+	// ===================== Admin APIs ======================
+
+	/**
+	 * Creates a new blog post
+	 * @param {CreateBlogDto} createBlogDto - Blog creation data
+	 */
+	@Post()
+	@AuthDecorator()
+	@PermissionDecorator(Permissions['Blog.writer'], Permissions['Blog.manager'])
+	@ApiOperation({ summary: "[ RBAC ] - Create new blog" })
+	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
+	@CreateBlogResponses()
+	create(@Body() createBlogDto: CreateBlogDto) {
+		return this.blogService.create(createBlogDto);
 	}
 
 	/**
@@ -68,16 +82,6 @@ export class BlogController {
 		@Query() findBlogsDto: FindBlogsDto,
 	) {
 		return this.blogService.findMyBlogs(paginationDto, findBlogsDto);
-	}
-
-	/**
-	 * Finds a blog post by its ID or slug
-	 * @param {FindOneBlogDto} params - Blog ID or Slug
-	 */
-	@Get(':find')
-	@FindOneBlogResponses()
-	findOne(@Param() params: FindOneBlogDto) {
-		return this.blogService.findOne(params.find);
 	}
 
 	/**
