@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Expose } from "class-transformer";
-import { IsEnum, IsNotEmpty, IsOptional, Length } from "class-validator";
+import { Expose, Transform } from "class-transformer";
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
 import { BlogStatus } from "../enums/status.enum";
+import { stringToArray } from "src/common/utils/string-to-array.utility";
 
 export class CreateBlogDto {
 	@ApiProperty()
@@ -23,10 +24,14 @@ export class CreateBlogDto {
 	content: string;
 
 	@ApiPropertyOptional()
+	@IsOptional()
+	@IsString()
 	@Expose()
 	image: string;
 
 	@ApiPropertyOptional()
+	@IsOptional()
+	@IsString()
 	@Expose()
 	slug: string;
 
@@ -34,6 +39,12 @@ export class CreateBlogDto {
 	@IsOptional()
 	@IsEnum(BlogStatus)
 	@Expose()
-	status: string;
+	status: BlogStatus;
 
+	@ApiProperty({ type: String, isArray: true, description: "Category IDs" })
+	@Transform((params) => (!params.value ? [] : stringToArray(params.value)))
+	@IsArray()
+	@IsString({ each: true })
+	@Expose()
+	categories: string[];
 }

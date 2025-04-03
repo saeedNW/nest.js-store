@@ -1,6 +1,6 @@
 import { BaseTimestampedEntity } from "src/common/abstracts/base.entity";
 import { EntityName } from "src/common/enums/entity-name.enum";
-import { Column, Entity, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent } from "typeorm";
+import { Column, Entity, ManyToMany, Tree, TreeChildren, TreeParent } from "typeorm";
 import { CategoryType } from "../enum/category-type.enum";
 import { BlogEntity } from "src/modules/blog/entities/blog.entity";
 
@@ -19,6 +19,6 @@ export class CategoryEntity extends BaseTimestampedEntity {
 	@TreeParent({ onDelete: "CASCADE" })
 	parent: CategoryEntity;
 
-	@OneToMany(() => BlogEntity, (blog) => blog.category)
+	@ManyToMany(() => BlogEntity, (blog) => blog.categories)
 	blogs: BlogEntity[];
 }

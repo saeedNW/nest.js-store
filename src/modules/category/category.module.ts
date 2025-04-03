@@ -12,5 +12,6 @@ import { AuthModule } from '../auth/auth.module';
 	],
 	controllers: [CategoryController],
 	providers: [CategoryService],
+	exports: [TypeOrmModule],
 })
 export class CategoryModule { }

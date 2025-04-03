@@ -1,6 +1,6 @@
 import { BaseTimestampedEntity } from "src/common/abstracts/base.entity";
 import { EntityName } from "src/common/enums/entity-name.enum";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from "typeorm";
 import { BlogStatus } from "../enums/status.enum";
 import { UserEntity } from "src/modules/user/entities/user.entity";
 import { CategoryEntity } from "src/modules/category/entities/category.entity";
@@ -31,6 +31,7 @@ export class BlogEntity extends BaseTimestampedEntity {
 	@ManyToOne(() => UserEntity, (user) => user.blogs, { onDelete: "CASCADE" })
 	author: UserEntity;
 
-	@ManyToOne(() => CategoryEntity, (category) => category.blogs)
-	category: CategoryEntity;
+	@ManyToMany(() => CategoryEntity, (category) => category.blogs)
+	@JoinTable()
+	categories: CategoryEntity[];
 }

@@ -7,12 +7,14 @@ import { createSlug, deleteInvalidPropertyInObject, randomId } from 'src/common/
 import { escapeAndTrim } from 'src/common/utils/sanitizer.utility';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BlogEntity } from './entities/blog.entity';
-import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
+import { Brackets, In, Repository, SelectQueryBuilder } from 'typeorm';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { RoleService } from '../role/role.service';
 import { Permissions } from 'src/common/enums/permissions.enum';
+import { CategoryEntity } from '../category/entities/category.entity';
+import { CategoryType } from '../category/enum/category-type.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
@@ -20,6 +22,9 @@ export class BlogService {
 		// Register blog repository
 		@InjectRepository(BlogEntity)
 		private blogRepository: Repository<BlogEntity>,
+		// Register category repository
+		@InjectRepository(CategoryEntity)
+		private categoryRepository: Repository<CategoryEntity>,
 		// Make the current request accessible in service
 		@Inject(REQUEST) private request: Request,
 		// Register i18n service
@@ -43,11 +48,15 @@ export class BlogService {
 		// Generate a unique slug
 		const slug = await this.generateSlug(createBlogDto.title, createBlogDto.slug);
 
+		// Fetch and validate categories
+		const categories = await this.getValidCategories(createBlogDto.categories);
+
 		// Create new blog data
 		const blog: BlogEntity = this.blogRepository.create({
 			...createBlogDto,
 			slug,
 			authorId: author,
+			categories,
 		});
 
 		// Save blog data to database
@@ -169,6 +178,11 @@ export class BlogService {
 			blog.slug = await this.generateSlug(updateBlogDto.title ?? blog.title, updateBlogDto.slug, id);
 		}
 
+		// Fetch and validate categories if provided
+		if (updateBlogDto.categories) {
+			blog.categories = await this.getValidCategories(updateBlogDto.categories);
+		}
+
 		// Merge updated fields into the existing blog object
 		Object.assign(blog, updateBlogDto);
 
@@ -196,6 +210,15 @@ export class BlogService {
 		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {
 			lang: I18nContext?.current()?.lang
 		})
+	}
+
+	/**
+	 * Fetch and validate categories from the database
+	 * @param {string[]} [categoryIds] + List of category IDs
+	 */
+	private async getValidCategories(categoryIds?: string[]): Promise<CategoryEntity[]> {
+		if (!categoryIds?.length) return [];
+		return this.categoryRepository.findBy({ id: In(categoryIds), type: CategoryType.BLOG });
 	}
 
 	/**
