@@ -30,7 +30,21 @@ export class FindAllBlogsSuccess extends OkApiBaseResponse {
 							last_name: "last name",
 							profile_image: "http://localhost:3000/uploads/user/profile/1/1743188782720-Screenshot_20250312_193643.png"
 						}
-					}
+					},
+					categories: [
+						{
+							id: 1,
+							title: "NodeJS"
+						},
+						{
+							id: 4,
+							title: "BackEnd"
+						},
+						{
+							id: 6,
+							title: "NestJS"
+						}
+					]
 				}
 			],
 			meta: {
@@ -72,60 +86,22 @@ export class FindOneBlogsSuccess extends OkApiBaseResponse {
 					last_name: "last name",
 					profile_image: "http://localhost:3000/uploads/user/profile/1/1743188782720-Screenshot_20250312_193643.png"
 				}
-			}
+			},
+			categories: [
+				{
+					id: 1,
+					title: "NodeJS"
+				},
+				{
+					id: 4,
+					title: "BackEnd"
+				},
+				{
+					id: 6,
+					title: "NestJS"
+				}
+			]
 		}
 	})
 	data: BlogEntity;
 }
-
-// export class FindOneRoleSuccess extends OkApiBaseResponse {
-// 	@ApiProperty({
-// 		description: "Response data",
-// 		example: {
-// 			id: 7,
-// 			created_at: "2025-03-21T02:40:22.799Z",
-// 			updated_at: "2025-03-21T02:40:22.799Z",
-// 			title: "Role #1",
-// 			label: "Role #1",
-// 			permissions: [
-// 				{
-// 					id: 1,
-// 					title: "Permission #1"
-// 				},
-// 				{
-// 					id: 2,
-// 					title: "Permission #2"
-// 				}
-// 			]
-// 		},
-// 	})
-// 	data: RoleEntity;
-// }
-
-// export class UpdateRoleSuccess extends OkApiBaseResponse {
-// 	@ApiProperty({
-// 		description: "Response data",
-// 		example: {
-// 			updatedRole: {
-// 				id: 7,
-// 				created_at: "2025-03-21T02:40:22.799Z",
-// 				updated_at: "2025-03-21T02:40:22.799Z",
-// 				title: "role_title",
-// 				label: "role_label",
-// 				permissions: [
-// 					{
-// 						id: 1,
-// 						title: "permission #1"
-// 					},
-// 					{
-// 						id: 2,
-// 						title: "permission #2"
-// 					}
-// 				]
-// 			}
-// 		},
-// 	})
-// 	data: { updatedRole: RoleEntity }
-// }
-
-// export class RemoveRoleSuccess extends OkApiBaseResponse { }

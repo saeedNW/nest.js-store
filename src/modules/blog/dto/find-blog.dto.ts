@@ -1,9 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumberString, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class FindBlogsDto {
 	@ApiPropertyOptional({ description: "Search by title, description, content, slug, or author's name" })
 	search: string;
+
+	@ApiPropertyOptional({ description: "Filter by category title" })
+	category: string;
 }
 
 export class FindOneBlogDto {

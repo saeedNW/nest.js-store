@@ -86,7 +86,8 @@ export class BlogService {
 			paginationDto,
 			this.blogRepository,
 			queryBuilder,
-			`${process.env.SERVER}/blog`
+			`${process.env.SERVER}/blog`,
+			true
 		);
 
 		return blogs
@@ -114,7 +115,8 @@ export class BlogService {
 			paginationDto,
 			this.blogRepository,
 			queryBuilder,
-			`${process.env.SERVER}/blog`
+			`${process.env.SERVER}/blog`,
+			true
 		);
 
 		return blogs
@@ -139,12 +141,15 @@ export class BlogService {
 			])
 			.innerJoin("blog.author", "author")
 			.innerJoin("author.profile", "profile")
+			.leftJoinAndSelect("blog.categories", "category")
 			.select([
 				"blog",
 				"author.id",
 				"profile.first_name",
 				"profile.last_name",
 				"profile.profile_image",
+				"category.id",
+				"category.title",
 			]).getOne();
 
 		// Throw error if blog was not found
@@ -218,6 +223,15 @@ export class BlogService {
 	 */
 	private async getValidCategories(categoryIds?: string[]): Promise<CategoryEntity[]> {
 		if (!categoryIds?.length) return [];
+
+		for (const id of categoryIds) {
+			if (isNaN(+id)) {
+				throw new BadRequestException(this.i18n.t('locale.BadRequestMessages.InvalidCategory', {
+					lang: I18nContext?.current()?.lang
+				}));
+			}
+		}
+
 		return this.categoryRepository.findBy({ id: In(categoryIds), type: CategoryType.BLOG });
 	}
 
@@ -232,17 +246,27 @@ export class BlogService {
 			.createQueryBuilder("blog")
 			.leftJoin("blog.author", "author")
 			.leftJoin("author.profile", "profile")
+			.leftJoinAndSelect("blog.categories", "category")
 			.select([
 				"blog",
 				"author.id",
 				"profile.first_name",
 				"profile.last_name",
 				"profile.profile_image",
+				"category.id",
+				"category.title",
 			]);
 
 		// Apply author ID filter if provided
 		if (authorId) {
 			queryBuilder.andWhere("author.id = :authorId", { authorId });
+		}
+
+		// Filter by category title (exact match, can be changed to ILIKE for case-insensitive)
+		if (filters.category) {
+			queryBuilder.andWhere("category.title ILIKE :categoryTitle", {
+				categoryTitle: filters.category,
+			});
 		}
 
 		// Apply search filter if provided

@@ -19,6 +19,7 @@ import {
 	RemoveBlogResponses,
 	UpdateBlogResponses
 } from './decorators/swagger-responses.decorator';
+import { plainToClass } from 'class-transformer';
 
 @Controller('blog')
 @ApiTags("Blog")
@@ -45,7 +46,7 @@ export class BlogController {
 	 * Finds a blog post by its ID or slug
 	 * @param {FindOneBlogDto} params - Blog ID or Slug
 	 */
-	@Get(':find')
+	@Get('/single/:find')
 	@FindOneBlogResponses()
 	findOne(@Param() params: FindOneBlogDto) {
 		return this.blogService.findOne(params.find);
@@ -64,6 +65,11 @@ export class BlogController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@CreateBlogResponses()
 	create(@Body() createBlogDto: CreateBlogDto) {
+		// filter client data and remove unwanted data
+		createBlogDto = plainToClass(CreateBlogDto, createBlogDto, {
+			excludeExtraneousValues: true,
+		});
+
 		return this.blogService.create(createBlogDto);
 	}
 
@@ -100,6 +106,11 @@ export class BlogController {
 	@ApiConsumes(SwaggerConsumes.URL_ENCODED, SwaggerConsumes.JSON)
 	@UpdateBlogResponses()
 	update(@Param('id', ParseIntPipe) id: number, @Body() updateBlogDto: UpdateBlogDto) {
+		// filter client data and remove unwanted data
+		updateBlogDto = plainToClass(UpdateBlogDto, updateBlogDto, {
+			excludeExtraneousValues: true,
+		});
+
 		return this.blogService.update(id, updateBlogDto);
 	}
 

@@ -32,6 +32,10 @@ export class BlogEntity extends BaseTimestampedEntity {
 	author: UserEntity;
 
 	@ManyToMany(() => CategoryEntity, (category) => category.blogs)
-	@JoinTable()
+	@JoinTable({
+		name: 'blog_categories',
+		joinColumn: { name: 'blog_id', referencedColumnName: 'id' },
+		inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
+	})
 	categories: CategoryEntity[];
 }

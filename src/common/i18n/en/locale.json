@@ -47,6 +47,7 @@
 		"InvalidPassword": "The entered password is invalid",
 		"InvalidPhoneToken": "Invalid phone update token",
 		"InvalidParentType": "The parent's type is not the same as the category's type",
+		"InvalidCategory": "The chosen category is invalid",
 		"NotTheAuthor": "You are not this blog's author"
 	},
 	"ConflictMessages": {
