@@ -7,7 +7,7 @@ import { BlogEntity } from "src/modules/blog/entities/blog.entity";
 @Entity(EntityName.CATEGORY)
 @Tree("closure-table") // Ensure closure-table strategy is used correctly
 export class CategoryEntity extends BaseTimestampedEntity {
-	@Column({ unique: true })
+	@Column()
 	title: string;
 
 	@Column({ type: 'enum', enum: CategoryType })

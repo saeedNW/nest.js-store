@@ -30,7 +30,7 @@ export class CategoryService {
 		escapeAndTrim(createCategoryDto);
 
 		// Validate title duplication
-		await this.duplicatedTitle(createCategoryDto.title);
+		await this.duplicatedTitle(createCategoryDto.title, createCategoryDto.type);
 
 		// Parent validation
 		let parent = await this.parentValidation(createCategoryDto.parentId, createCategoryDto.type);
@@ -141,7 +141,7 @@ export class CategoryService {
 
 		// Validate title duplication
 		if (updateCategoryDto.title) {
-			await this.duplicatedTitle(updateCategoryDto.title, id);
+			await this.duplicatedTitle(updateCategoryDto.title, updateCategoryDto.type || category.type, id);
 		}
 
 		// Parent validation
@@ -164,7 +164,7 @@ export class CategoryService {
 
 	async remove(id: number) {
 		// Verify category existence
-		const category = await this.findOne(id);
+		await this.findOne(id);
 
 		// remove category
 		await this.categoryRepository.delete({ id });
@@ -177,10 +177,12 @@ export class CategoryService {
 	/**
 	 * Check if the category title is duplicated
 	 * @param {string} title - The title of the category to check
+	 * @param {CategoryType} type - The type of the category to check
 	 * @param {number} [id] - Category ID
 	 */
-	private async duplicatedTitle(title: string, id?: number) {
-		const category = await this.categoryRepository.findOne({ where: { title } })
+	private async duplicatedTitle(title: string, type: CategoryType, id?: number) {
+		const category = await this.categoryRepository.findOne({ where: { title, type } })
+
 		if (category && category.id !== id) {
 			throw new ConflictException(
 				this.i18n.t('locale.ConflictMessages.ConflictCategory', {
