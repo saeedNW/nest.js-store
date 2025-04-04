@@ -32,8 +32,8 @@ export function swaggerConfiguration(app: INestApplication) {
 
 	// Setup Swagger UI with custom options
 	SwaggerModule.setup('/api-doc', app, swaggerDocument, {
-		// customCssUrl: '/swagger-ui/custom.css', // Optional for CSS changes
-		customJs: '/swagger-ui/custom.js' // Custom JavaScript
+		customCssUrl: '/swagger-ui/custom.css', // Custom css
+		customJs: '/swagger-ui/custom.js', // Custom JavaScript
 	});
 }
 
