@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { BlogStatus } from '../enums/status.enum';
 
 export class FindBlogsDto {
 	@ApiPropertyOptional({ description: "Search by title, description, content, slug, or author's name" })
@@ -7,6 +8,11 @@ export class FindBlogsDto {
 
 	@ApiPropertyOptional({ description: "Filter by category title" })
 	category: string;
+
+	@ApiPropertyOptional({ description: "Filter by blog published status", enum: BlogStatus, default: BlogStatus.PUBLISHED })
+	@IsOptional()
+	@IsEnum(BlogStatus)
+	status: BlogStatus;
 }
 
 export class FindOneBlogDto {

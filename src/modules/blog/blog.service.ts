@@ -82,15 +82,13 @@ export class BlogService {
 		const queryBuilder = this.buildBlogQuery(findBlogsDto);
 
 		// Paginate the results
-		const blogs = await paginate(
+		return await paginate(
 			paginationDto,
 			this.blogRepository,
 			queryBuilder,
 			`${process.env.SERVER}/blog`,
 			true
 		);
-
-		return blogs
 	}
 
 	/**
@@ -260,6 +258,11 @@ export class BlogService {
 		// Apply author ID filter if provided
 		if (authorId) {
 			queryBuilder.andWhere("author.id = :authorId", { authorId });
+		}
+
+		// Apply status filter if provided
+		if (filters.status) {
+			queryBuilder.andWhere("blog.status ILIKE :status", { status: filters.status });
 		}
 
 		// Filter by category title (exact match, can be changed to ILIKE for case-insensitive)
