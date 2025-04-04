@@ -126,6 +126,11 @@ export class UserController {
 		@Query() findUserDto: FindUsersDto,
 	) {
 		// filter client data and remove unwanted data
+		paginationDto = plainToClass(PaginationDto, paginationDto, {
+			excludeExtraneousValues: true,
+		});
+		
+		// filter client data and remove unwanted data
 		findUserDto = plainToClass(FindUsersDto, findUserDto, {
 			excludeExtraneousValues: true,
 		});

@@ -79,6 +79,11 @@ export class CategoryController {
 	@PermissionDecorator(Permissions['Category.manager'])
 	@ApiOperation({ summary: "[ RBAC ] - Retrieve categories list" })
 	findAll(@Query() paginationDto: PaginationDto) {
+		// filter client data and remove unwanted data
+		paginationDto = plainToClass(PaginationDto, paginationDto, {
+			excludeExtraneousValues: true,
+		});
+		
 		return this.categoryService.findAll(paginationDto);
 	}
 

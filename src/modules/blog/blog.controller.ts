@@ -39,6 +39,11 @@ export class BlogController {
 		@Query() paginationDto: PaginationDto,
 		@Query() findBlogsDto: FindBlogsDto,
 	) {
+		// filter client data and remove unwanted data
+		paginationDto = plainToClass(PaginationDto, paginationDto, {
+			excludeExtraneousValues: true,
+		});
+
 		return this.blogService.findAll(paginationDto, findBlogsDto);
 	}
 
@@ -87,6 +92,11 @@ export class BlogController {
 		@Query() paginationDto: PaginationDto,
 		@Query() findBlogsDto: FindBlogsDto,
 	) {
+		// filter client data and remove unwanted data
+		paginationDto = plainToClass(PaginationDto, paginationDto, {
+			excludeExtraneousValues: true,
+		});
+		
 		return this.blogService.findMyBlogs(paginationDto, findBlogsDto);
 	}
 
