@@ -5,6 +5,7 @@ import { BlogEntity } from "../entities/blog.entity";
 
 export class CreateBlogSuccess extends CreateApiBaseResponse { }
 export class UpdateBlogSuccess extends CreateApiBaseResponse { }
+export class TrashBlogSuccess extends CreateApiBaseResponse { }
 export class RemoveBlogSuccess extends CreateApiBaseResponse { }
 
 export class FindAllBlogsSuccess extends OkApiBaseResponse {

@@ -1,5 +1,5 @@
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiForbiddenResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiUnauthorizedResponse, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
-import { CreateBlogSuccess, FindAllBlogsSuccess, FindOneBlogsSuccess, RemoveBlogSuccess, UpdateBlogSuccess } from "../responses/success.response";
+import { CreateBlogSuccess, FindAllBlogsSuccess, FindOneBlogsSuccess, RemoveBlogSuccess, TrashBlogSuccess, UpdateBlogSuccess } from "../responses/success.response";
 import { UnauthorizedResponse } from "src/common/responses/unauthorized.response";
 import { AccessDeniedResponse } from "src/common/responses/access-denied.response";
 import { UnprocessableEntityResponse } from "src/common/responses/unprocessable.response";
@@ -115,6 +115,39 @@ export function UpdateBlogResponses() {
 		ApiUnprocessableEntityResponse({
 			description: "Unprocessable Entity Response",
 			type: UnprocessableEntityResponse,
+		})(target, propertyKey, descriptor);
+
+		ApiInternalServerErrorResponse({
+			description: "Internal Server Error",
+			type: InternalServerErrorResponse,
+		})(target, propertyKey, descriptor);
+	};
+}
+
+export function TrashBlogResponses() {
+	return function (
+		target: any,
+		propertyKey: string,
+		descriptor: PropertyDescriptor
+	) {
+		ApiOkResponse({
+			description: "Success Response",
+			type: TrashBlogSuccess,
+		})(target, propertyKey, descriptor);
+
+		ApiUnauthorizedResponse({
+			description: "Unauthorized Response",
+			type: UnauthorizedResponse,
+		})(target, propertyKey, descriptor);
+
+		ApiForbiddenResponse({
+			description: "Forbidden Response",
+			type: AccessDeniedResponse,
+		})(target, propertyKey, descriptor);
+
+		ApiNotFoundResponse({
+			description: "Not fund Response",
+			type: NotFoundResponse,
 		})(target, propertyKey, descriptor);
 
 		ApiInternalServerErrorResponse({

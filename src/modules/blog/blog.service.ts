@@ -15,6 +15,7 @@ import { RoleService } from '../role/role.service';
 import { Permissions } from 'src/common/enums/permissions.enum';
 import { CategoryEntity } from '../category/entities/category.entity';
 import { CategoryType } from '../category/enum/category-type.enum';
+import { BlogStatus } from './enums/status.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
@@ -213,6 +214,23 @@ export class BlogService {
 		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {
 			lang: I18nContext?.current()?.lang
 		})
+	}
+	/**
+	 * Move blog to trash
+	 * @param {number} id - Blog ID
+	 */
+	async trash(id: number) {
+		// Check blog existence
+		const blog = await this.findOne(id);
+		// Validate user access to modify the blog
+		await this.permissionValidation(blog);
+
+		// Remove blog
+		await this.blogRepository.update({ id }, { status: BlogStatus.TRASHED });
+
+		return this.i18n.t('locale.PublicMessages.SuccessRemoval', {
+			lang: I18nContext?.current()?.lang
+		});
 	}
 
 	/**
