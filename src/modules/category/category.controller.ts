@@ -34,7 +34,7 @@ export class CategoryController {
 	 * @param {CategoryType} type - The category type to filter categories by
 	 * @returns
 	 */
-	@Get("type/:type")
+	@Get("/tree/:type")
 	@ApiOperation({ summary: "Retrieve root categories by type and returns their descendant trees" })
 	@ApiParam({ name: 'type', required: true, enum: CategoryType })
 	findByType(@Param("type") type: CategoryType) {
