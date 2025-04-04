@@ -16,6 +16,7 @@ import { Permissions } from 'src/common/enums/permissions.enum';
 import { CategoryEntity } from '../category/entities/category.entity';
 import { CategoryType } from '../category/enum/category-type.enum';
 import { BlogStatus } from './enums/status.enum';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlogService {
@@ -80,7 +81,7 @@ export class BlogService {
 		escapeAndTrim(findBlogsDto);
 
 		// Create the base query builder
-		const queryBuilder = this.buildBlogQuery(findBlogsDto);
+		const queryBuilder = await this.buildBlogQuery(findBlogsDto);
 
 		// Paginate the results
 		return await paginate(
@@ -107,7 +108,7 @@ export class BlogService {
 		let { id: authorId } = this.getRequestUser();
 
 		// Create the base query builder
-		const queryBuilder = this.buildBlogQuery(findBlogsDto, authorId);
+		const queryBuilder = await this.buildBlogQuery(findBlogsDto, authorId);
 
 		// Paginate the results
 		const blogs = await paginate(
@@ -131,10 +132,13 @@ export class BlogService {
 		// using invalid value as integer for id search in where option
 		const blogId = isNaN(Number(find)) ? undefined : Number(find);
 
+		// Retrieve user data
+		const user = this.getRequestUser(true);
+
 		// Retrieve single blog data by its id or slug
-		const blog = await this.blogRepository
+		const queryBuilder = this.blogRepository
 			.createQueryBuilder("blog")
-			.where([
+			.andWhere([
 				{ id: blogId },
 				{ slug: find }
 			])
@@ -149,7 +153,35 @@ export class BlogService {
 				"profile.profile_image",
 				"category.id",
 				"category.title",
-			]).getOne();
+			])
+
+
+		// Enforce blog status filtering based on the user role
+		if (!user) {
+			// Public users: Can only see published blogs
+			queryBuilder.andWhere("blog.status = :status", { status: BlogStatus.PUBLISHED });
+		} else {
+			// Retrieve user's role data
+			const userRole = await this.roleService.getRoleData(user.role.id);
+
+			// Check if user has super access to blog section
+			const hasSuperAccess = userRole?.permissions.some((perm) =>
+				[Permissions.Master, Permissions['Blog.manager']].includes(perm.title as Permissions)
+			);
+
+			if (!hasSuperAccess) {
+				// Writers: Can retrieve only their own drafts/trashed blogs
+				queryBuilder.andWhere(
+					new Brackets((qb) => {
+						qb.where("blog.status = :published", { published: BlogStatus.PUBLISHED })
+							.orWhere("blog.authorId = :authorId",{ authorId: user.id });
+					})
+				);
+			}
+		}
+
+		// Execute the query
+		const blog = await queryBuilder.getOne();
 
 		// Throw error if blog was not found
 		if (!blog) {
@@ -255,9 +287,12 @@ export class BlogService {
 	 * Builds the query for retrieving blogs based on filters
 	 * @param {FindBlogsDto} filters - The filters for searching blogs
 	 * @param {number} authorId - The author ID
-	 * @returns {SelectQueryBuilder<UserEntity>} - The built query
+	 * @returns {Promise<SelectQueryBuilder<BlogEntity>>} - The built query
 	 */
-	private buildBlogQuery(filters: FindBlogsDto, authorId?: number): SelectQueryBuilder<BlogEntity> {
+	private async buildBlogQuery(filters: FindBlogsDto, authorId?: number): Promise<SelectQueryBuilder<BlogEntity>> {
+		// Retrieve user data
+		const user = this.getRequestUser(true);
+
 		const queryBuilder = this.blogRepository
 			.createQueryBuilder("blog")
 			.leftJoin("blog.author", "author")
@@ -278,9 +313,36 @@ export class BlogService {
 			queryBuilder.andWhere("author.id = :authorId", { authorId });
 		}
 
-		// Apply status filter if provided
-		if (filters.status) {
-			queryBuilder.andWhere("blog.status ILIKE :status", { status: filters.status });
+		// Enforce blog status filtering based on the user role
+		if (!user) {
+			// Public users: Can only see published blogs
+			queryBuilder.andWhere("blog.status = :status", { status: BlogStatus.PUBLISHED });
+		} else {
+			// Retrieve user's role data
+			const userRole = await this.roleService.getRoleData(user.role.id);
+
+			// Check if user has super access to blog section
+			const hasSuperAccess = userRole?.permissions.some((perm) =>
+				[Permissions.Master, Permissions['Blog.manager']].includes(perm.title as Permissions)
+			);
+
+			if (hasSuperAccess) {
+				// Admins & Blog Managers: Can filter by any status
+				if (filters.status) {
+					queryBuilder.andWhere("blog.status = :status", { status: filters.status });
+				}
+			} else {
+				// Writers: Can retrieve only their own drafts/trashed blogs
+				queryBuilder.andWhere(
+					new Brackets((qb) => {
+						qb.where("blog.status = :published", { published: BlogStatus.PUBLISHED })
+							.orWhere(
+								"blog.status = :status AND blog.authorId = :authorId",
+								{ status: filters.status || BlogStatus.PUBLISHED, authorId: user.id }
+							);
+					})
+				);
+			}
 		}
 
 		// Filter by category title (exact match, can be changed to ILIKE for case-insensitive)
@@ -310,12 +372,19 @@ export class BlogService {
 	/**
 	 * Retrieve user's data saved in request
 	 */
-	private getRequestUser() {
+	private getRequestUser(isPublicRoute: true): UserEntity | null;
+	private getRequestUser(isPublicRoute?: false): UserEntity;
+	private getRequestUser(isPublicRoute: boolean = false) {
 		// Retrieve user data from request
 		let user = this.request.user;
 
-		// Throw error if account not found
+		// User not found handler
 		if (!user) {
+			// Return null if the request is from a public route and
+			// user existence is not important
+			if (isPublicRoute) return null;
+
+			// Throw error if the user's existence is
 			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.AccountNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));

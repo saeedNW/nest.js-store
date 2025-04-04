@@ -37,6 +37,12 @@ export class BlogController {
 	 */
 	@Get()
 	@FindAllBlogsResponses()
+	@ApiOperation({
+		description: "Enforce blog status filtering based on the user role:<br>" +
+			"<b>Public users:</b> Can only see published blogs<br>" +
+			"<b>Admins & Blog Managers:</b> Can filter by any status<br>" +
+			"<b>Writers:</b> Can retrieve only their own drafts / trashed blogs"
+	})
 	findAll(
 		@Query() paginationDto: PaginationDto,
 		@Query() findBlogsDto: FindBlogsDto,

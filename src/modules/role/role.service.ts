@@ -152,13 +152,26 @@ export class RoleService {
 	 * @returns {Promise<RoleEntity>} - Return role entity
 	 */
 	async findOneByTitle(title: string): Promise<RoleEntity> {
-		const role: RoleEntity | null = await this.roleRepository.findOne({ where: { title }});
+		const role: RoleEntity | null = await this.roleRepository.findOne({ where: { title } });
 
 		if (!role) {
 			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.RoleNotFound', {
 				lang: I18nContext?.current()?.lang
 			}));
 		}
+
+		return role
+	}
+
+	/**
+	 * Retrieve role by ID
+	 * @param {number} id - Role ID
+	 * @returns {Promise<RoleEntity | null>} - Return role entity
+	 */
+	async getRoleData(id: number): Promise<RoleEntity | null> {
+		const role: RoleEntity | null = await this.roleRepository.findOne({ where: { id }, relations: ["permissions"] });
+
+		if (!role) return null;
 
 		return role
 	}
