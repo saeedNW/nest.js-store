@@ -12,6 +12,7 @@ import { RoleModule } from '../role/role.module';
 import { GalleryModule } from '../gallery/gallery.module';
 import { BlogModule } from '../blog/blog.module';
 import { CategoryModule } from '../category/category.module';
+import { CommentModule } from '../comment/comment.module';
 
 @Module({
 	imports: [
@@ -46,6 +47,7 @@ import { CategoryModule } from '../category/category.module';
 		GalleryModule,
 		BlogModule,
 		CategoryModule,
+		CommentModule
 	],
 	controllers: [],
 	providers: [],

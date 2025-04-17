@@ -5,6 +5,7 @@ import { AddressEntity } from "./address.entity";
 import { ProfileEntity } from "./profile.entity";
 import { RoleEntity } from "src/modules/role/entities/role.entity";
 import { BlogEntity } from "src/modules/blog/entities/blog.entity";
+import { CommentEntity } from "src/modules/comment/entities/comment.entity";
 
 @Entity(EntityName.USER)
 export class UserEntity extends BaseTimestampedEntity {
@@ -38,4 +39,7 @@ export class UserEntity extends BaseTimestampedEntity {
 
 	@OneToMany(() => BlogEntity, (blog) => blog.author)
 	blogs: BlogEntity[];
+
+	@OneToMany(() => CommentEntity, (comment) => comment.user)
+	comments: CommentEntity[];
 }

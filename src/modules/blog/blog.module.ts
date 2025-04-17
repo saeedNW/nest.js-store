@@ -17,6 +17,7 @@ import { UserInjector } from '../auth/middlewares/user-injector.middleware';
 	],
 	controllers: [BlogController],
 	providers: [BlogService],
+	exports: [BlogService]
 })
 export class BlogModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {

@@ -266,6 +266,30 @@ export class BlogService {
 	}
 
 	/**
+	 * Validate blog existence
+	 * @param id - The Blog ID
+	 * @param status - The Blog Status
+	 * @returns {Promise<BlogEntity>}
+	 */
+	async validateExistence(id: number, status?: BlogStatus): Promise<BlogEntity> {
+		// Generate find query
+		const where: { id: number, status?: BlogStatus } = { id }
+		if (status) where.status = status;
+
+		// Retrieve blog data
+		const blog = await this.blogRepository.findOne({ where });
+
+		// Throw error if blog was not found
+		if (!blog) {
+			throw new NotFoundException(this.i18n.t('locale.NotFoundMessages.BlogNotFound', {
+				lang: I18nContext?.current()?.lang
+			}));
+		}
+
+		return blog;
+	}
+
+	/**
 	 * Fetch and validate categories from the database
 	 * @param {string[]} [categoryIds] + List of category IDs
 	 */

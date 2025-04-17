@@ -8,4 +8,5 @@ export enum EntityName {
 	GALLERY = "gallery",
 	BLOG = "blog",
 	CATEGORY = "category",
+	COMMENT = "comment",
 }

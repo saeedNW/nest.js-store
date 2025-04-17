@@ -75,6 +75,7 @@ export function deleteInvalidPropertyInObject(
  * @returns {string} created slug
  */
 export const createSlug = (str: string): string => {
+	// Remove all non-word characters and replace spaces with hyphens
 	return str
 		.replace(/[،ًًًٌٍُِ\.\+\-_)(*&^%$#@!~'";:?><«»`ء]+/g, "")
 		?.replace(/[\s]+/g, "-");
@@ -85,3 +86,13 @@ export const createSlug = (str: string): string => {
  * @returns {string} - A random number
  */
 export const randomId = (): string => Math.random().toString(36).substring(2);
+
+/**
+ * Convert string boolean to a valid boolean
+ * @param value - The value which should be converted to boolean
+ */
+export function toBoolean(value: any): boolean | any {
+	if ([true, "true"].includes(value)) return true;
+	if ([false, "false"].includes(value)) return false;
+	return value;
+}

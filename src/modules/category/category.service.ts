@@ -63,7 +63,7 @@ export class CategoryService {
 			paginationDto,
 			this.categoryRepository,
 			queryBuilder,
-			process.env.SERVER_LINK + "/category"
+			process.env.SERVER + "/category"
 		);
 	}
 
